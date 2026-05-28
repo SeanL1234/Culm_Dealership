@@ -7,11 +7,213 @@ Description: The Vehicle class.
 */
 public class Vehicle {
 
-    public Spec getSpec() {
-        return null;
-    }
-    
-    public double getBasePrice() {
-        return 0;
-    }
+   // Constans
+   public static final double CHEAP_RANG = 0.2;
+   public static final int FF_NUMSEATS = 5;
+   public static final int FF_SAFETYRATING = 9;
+   public static final String FF_WHEELCONTROL = " ";
+   
+   // Fields
+   private String modelName;
+   private String modelBrand;
+   private String typeVehicle;
+   private int year;
+   private int basePrice;
+   private int safetyRating;
+   private String vin;
+   private int towRating;
+   private String typeWheelControl;
+   private String transmissionType;
+   private String trimLevel;
+   private int maxSpeed;
+   private int numSeats;
+   private String color;
+   private String maintenancePeriod;
+   private int range;
+   private Spec vehicleSpec;
+   
+   // Accessors
+   public String getModelName(){
+      return modelName;
+   }
+
+   public String getModelBrand(){
+      return modelBrand;
+   }
+
+   public String getTypeVehicle(){
+      return typeVehicle;
+   }
+   
+   public int getYear(){
+      return year;
+   }
+   
+   public int getBasePrice() {
+      return basePrice;
+   }
+   
+   public int getSafetyRating(){
+      return safetyRating;
+   }
+   
+   public String getVin(){
+      return vin;
+   }
+   
+   public int getTowRating(){
+      return towRating;
+   }
+   
+   public String getTypeWheelControl(){
+      return typeWheelControl;
+   }
+   
+   public String getTransmissionType(){
+      return transmissionType;
+   }
+   
+   public String getTrimLevel(){
+      return trimLevel;
+   }
+   
+   public int getMaxSpeed(){
+      return maxSpeed;
+   }
+   
+   public int getNumSeats(){
+      return numSeats;
+   }
+   
+   public String getColor(){
+      return color;
+   }
+   
+   public String getMaintenancePeriod(){
+      return maintenancePeriod;
+   }
+   
+   public int getRange(){
+      return range;
+   }
+
+   public Spec getVehicleSpec() {
+      return vehicleSpec;
+   }
+   
+   // Mutators
+   public void setModelName(String modelName){
+      this.modelName = modelName;
+   }
+   
+   public void setModelBrand(String modelBrand){
+      this.modelBrand = modelBrand;
+   }
+   
+   public void setTypeVehicle(String typeVehicle){
+      this.typeVehicle = typeVehicle;
+   }
+   
+   public void setYear(int year){
+      this.year = year;
+   }
+   
+   public void setBasePrice(int basePrice){
+      this.basePrice = basePrice;
+   }
+   
+   public void setSafetyRating(int safetyRating){
+      this.safetyRating = safetyRating;
+   }
+   
+   public void setVin(String vin){
+      this.vin = vin;
+   }
+   
+   public void setTowRating(int towRating){
+      this.towRating = towRating;
+   }
+   
+   public void setTypeWheelControl(String typeWheelControl){
+      this.typeWheelControl = typeWheelControl;
+   }
+   
+   public void setTransmissionType(String transmissionType){
+      this.transmissionType = transmissionType;
+   }
+   
+   public void setTrimLevel(String trimLevel){
+      this.trimLevel = trimLevel;
+   }
+   
+   public void setMaxSpeed(int maxSpeed){
+      this.maxSpeed = maxSpeed;
+   }
+   
+   public void setNumSeats(int numSeats){
+      this.numSeats = numSeats;
+   }
+   
+   public void setColor(String color){
+      this.color = color;
+   }
+   
+   public void setMaintenancePeriod(String maintenancePeriod){
+      this.maintenancePeriod = maintenancePeriod;
+   }
+   
+   public void setRange(int range){
+      this.range = range;
+   }
+   
+   public void setVehicleSpec(Spec vehicleSpec){
+      this.vehicleSpec = vehicleSpec;
+   }
+   
+   
+   // Constructor 
+   public Vehicle(String modelName, String modelBrand, String typeVehicle, int year, int basePrice, int safetyRating, String vin, int towRating, String typeWheelControl, String transmissionType, String trimLevel, int maxSpeed, int numSeats, String color, String maintenancePeriod, int range, Spec vehicleSpec){
+      this.modelName = modelName;
+      this.modelBrand = modelBrand;
+      this.typeVehicle = typeVehicle;
+      this.year = year;
+      this.basePrice = basePrice;
+      this.safetyRating = safetyRating;
+      this.vin = vin;
+      this.towRating = towRating;
+      this.typeWheelControl = typeWheelControl;
+      this.transmissionType = transmissionType;
+      this.trimLevel = trimLevel;
+      this.maxSpeed = maxSpeed;
+      this.numSeats = numSeats;
+      this.color = color;
+      this.maintenancePeriod = maintenancePeriod;
+      this.range = range;
+      this.vehicleSpec = vehicleSpec;
+   }
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
 }
