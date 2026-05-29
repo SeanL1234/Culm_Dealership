@@ -14,4 +14,8 @@ abstract class Account {
     }
 
     abstract boolean validate(Vehicle[] vehicles);
+
+    public String toString() {
+        return "Is Organization: " + isOrganization + "\nIs Family: " + isFamily;
+    }
 } 

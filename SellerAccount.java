@@ -70,4 +70,12 @@ public class SellerAccount extends Account {
             return false;
         }
     }
+
+    public String toString() {
+        return super.toString() + 
+            "\nOffered Price: $" + offeredPrice + 
+            "\nRating: " + rating + 
+            "\nOwned Vehicle: " + ownedVehicle + 
+            "\nRange of Accept: $" + rangeOfAccept;  
+    }
 }

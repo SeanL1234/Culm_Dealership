@@ -100,4 +100,13 @@ public class TradeInAccount extends Account {
     public boolean isRatedBad() {
         return rating < BAD_THRESHOLD;
     }
+
+    public String toString() {
+        return super.toString() + 
+            "\nVehicle for Trading: " + vehicleForTrading + 
+            "\nRating: " + rating + 
+            "\nExpectations: " + expectation + 
+            "\nPercent Match: %" + percentMatch * 100 + 
+            "\nRange of Accept: $" + rangeOfAccept;  
+    }
 }

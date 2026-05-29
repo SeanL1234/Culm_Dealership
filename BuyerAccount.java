@@ -99,5 +99,12 @@ public class BuyerAccount extends Account {
         return (int)smallest;
     }
 
-
+    public String toString() {
+        return super.toString() + 
+            "\nBudget: $" + budget + 
+            "\nType Car: " + typeCar + 
+            "\nExpectations: " + expectation + 
+            "\nPercent Match: %" + percentMatch * 100 + 
+            "\nRange of Accept: $" + rangeOfAccept;  
+    }
 }
