@@ -9,8 +9,8 @@ public class Vehicle {
 
    // Constans
    public static final double CHEAP_RANG = 0.2;
-   public static final int FF_NUMSEATS = 5;
-   public static final int FF_SAFETYRATING = 9;
+   public static final int FF_NUMSEATS = 4;
+   public static final int FF_SAFETYRATING = 8;
    public static final String FF_WHEELCONTROL = " ";
    
    // Fields
@@ -192,19 +192,65 @@ public class Vehicle {
       this.vehicleSpec = vehicleSpec;
    }
    
+   public boolean equals(Vehicle other){
+      if(other == null){
+         return false;
+      }
+      if(this == other){
+         return true;
+      }
+      if(!(other instanceof Vehicle)){
+         return false;
+      }else{
+         return this.modelName == other.modelName &&
+            this.modelBrand == modelBrand &&
+            this.typeVehicle == other.typeVehicle&&
+            this.year == other.year&&
+            this.basePrice == other.basePrice&&
+            this.safetyRating == other.safetyRating&&
+            this.vin == other.vin&&
+            this.towRating == other.towRating&&
+            this.typeWheelControl == other.typeWheelControl&&
+            this.transmissionType == other.transmissionType&&
+            this.trimLevel == other.trimLevel&&
+            this.maxSpeed == other.maxSpeed&&
+            this.numSeats == other.numSeats&&
+            this.color == other.color&&
+            this.maintenancePeriod == other.maintenancePeriod&&
+            this.range == other.range&&
+            this.vehicleSpec.equals(other.vehicleSpec);
+            // Using the equals methoeds in Spec !!!
+      }
+   }
    
+   public int compareToPrice(Vehicle other){
+      return this.basePrice-other.basePrice;
+   }
    
+   //!WIP need calculateExpectedPrice() from Spec
+   public boolean isCheap(){
+      return false;
+   }
    
+   //!WIP need typeWheelControl
+   public boolean isFamilyFriendly(){
+      return numSeats >=FF_NUMSEATS && safetyRating>=FF_SAFETYRATING && typeWheelControl.equals(FF_WHEELCONTROL);
+   }
    
+   //!WIP might need more
+   public String displayEssentials(){
+      return "VIN: "+vin +"\nModel: "+ modelName +"\nBrand: "+ modelBrand +"\nYear: "+ year +"\nColor: "+color;
+   }
    
+   //!WIP need Spec, issue with abstract in non-abstract class
+   //abstract int calculateMaintenanceFee(){
+   //   return 0;
+   //}
    
+   public String toString(){
+      return "Model: "+ modelName+"\nBrand: "+modelBrand+"\nType Vehicle: "+ typeVehicle+"\nYear: "+ year+"\nBase Price: "+basePrice+"\nSafety Rating: "+safetyRating+"\nVIN:"+vin+"\nTow Rating: "+towRating+"\nWheel Control: "+typeWheelControl+"\nTransmission Type: "+transmissionType+"\nTrim Level: "+trimLevel+"\nMax Speed: "+maxSpeed+"\nNum Seats: "+numSeats+"\nColor:"+color+"\nMaintenance Period: "+ maintenancePeriod+"\nRange: "+range+"\nVehicle Spec: "+vehicleSpec;
    
-   
-   
-   
-   
-   
-   
+   }
    
    
    
