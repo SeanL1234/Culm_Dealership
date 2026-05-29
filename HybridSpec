@@ -1,0 +1,136 @@
+public class HybridSpec extends Spec {
+
+    public static int DEPRECIATE_FUELEFF = 10; // can change
+    public static int DEPRECIATE_FUELEFF_BY_VALUE = 10; // can change
+    public static int DEPRECIATE_FUELEFF_BY_RATE = 10; // can change
+    public static int DEPRECIATE_CHARGING_TIME = 10; // can change
+    public static int DEPRECIATE_CHARGING_TIME_BY_VALUE = 10; // can change
+    public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; // can change
+
+    private int powerReturnRate;
+    private int chargingTime;
+    private int fuelEfficiency;
+
+    public HybridSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, int powerReturnRate, int chargingTime, int fuelEfficiency) {
+        super(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee);
+        this.powerReturnRate = powerReturnRate;
+        this.chargingTime = chargingTime;
+        this.fuelEfficiency = fuelEfficiency;
+    }
+
+    public int getPowerReturnRate() {
+        return powerReturnRate;
+    }
+
+    public void setPowerReturnRate(int powerReturnRate) {
+        this.powerReturnRate = powerReturnRate;
+    }
+
+    public int getChargingTime() {
+        return chargingTime;
+    }
+
+    public void setChargingTime(int chargingTime) {
+        this.chargingTime = chargingTime;
+    }
+
+    public int getFuelEfficiency() {
+        return fuelEfficiency;
+    }
+
+    public void setFuelEfficiency(int fuelEfficiency) {
+        this.fuelEfficiency = fuelEfficiency;
+    }
+
+    @Override
+    public int calculateYearlyDepreciationRate() {
+        int temp = 0;
+        
+        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+            temp += DEPRECIATE_FUELEFF_BY_RATE;
+        }
+
+        if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
+            temp += DEPRECIATE_CHARGING_TIME_BY_RATE;
+        }
+
+        if (age >= DEPRECIATE_AGE) {
+            temp += DEPRECIATE_AGE_BY_RATE;
+        }
+        if (mileage >= DEPRECIATE_MILEAGE) {
+            temp += DEPRECIATE_MILEAGE_BY_RATE;
+        }
+
+        return temp;
+    }
+
+    @Override
+    public int calculateExpectedPrice(int basePrice) {
+        int temp = 0;
+                
+        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+            temp += DEPRECIATE_FUELEFF_BY_PRICE;
+        }
+
+        if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
+            temp += DEPRECIATE_CHARGING_TIME_BY_PRICE;
+        }
+
+        if (age >= DEPRECIATE_AGE) {
+            temp += DEPRECIATE_AGE_BY_PRICE;
+        }
+        if (mileage >= DEPRECIATE_MILEAGE) {
+            temp += DEPRECIATE_MILEAGE_BY_PRICE;
+        }
+
+        return basePrice - temp;    
+    }
+
+    @Override
+    public boolean equals(Spec spec, double percentMatch) {
+        if (spec == null || !(spec instanceof HybridSpec)) {
+            return false;
+        } else {
+            HybridSpec hybridSpec = (HybridSpec) spec;
+            int matchCount = 0;
+            int totalCount = 0;
+
+            if (this.powerReturnRate >= hybridSpec.powerReturnRate) {
+                matchCount++;
+            }
+            totalCount++;
+
+            if (this.chargingTime <= hybridSpec.chargingTime) {
+                matchCount++;
+            }
+            totalCount++;
+
+            if (this.fuelEfficiency >= hybridSpec.fuelEfficiency) {
+                matchCount++;
+            }
+            totalCount++;
+
+            if (this.age <= hybridSpec.age) {
+                matchCount++;
+            }
+            totalCount++;
+
+            if (this.mileage <= hybridSpec.mileage) {
+                matchCount++;
+            }
+            totalCount++;
+
+            double matchPercentage = (double) matchCount / totalCount * 100;
+            return matchPercentage >= percentMatch;
+        }
+    }
+
+    @Override
+    public String toString() {
+        String temp = "";
+        temp += "Power Return Rate: " + powerReturnRate + "\n";
+        temp += "Charging Time: " + chargingTime + "\n";
+        temp += "Fuel Efficiency: " + fuelEfficiency + "\n";
+        return super.toString() + temp;
+    }
+}

@@ -1,9 +1,11 @@
 public abstract class Spec {
 
     public static int DEPRECIATE_AGE = 5;
-    public static int DEPRECIATE_MILEAGE = 100000;
     public static int DEPRECIATE_AGE_BY_VALUE = 20; // can change
+    public static int DEPRECIATE_AGE_BY_RATE = 10; // can change
+    public static int DEPRECIATE_MILEAGE = 100000;
     public static int DEPRECIATE_MILEAGE_BY_VALUE = 20; // can change
+    public static int DEPRECIATE_MILEAGE_BY_RATE = 10; // can change
 
 
     private int mileage;
@@ -20,15 +22,55 @@ public abstract class Spec {
         this.baseMaintenanceFee = baseMaintenanceFee;
     }
 
+    public int getMileage() {
+        return mileage;
+    }
+
+    public void setMileage(int mileage) {
+        this.mileage = mileage;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getWarrantyExpireYear() {
+        return warrantyExpireYear;
+    }
+
+    public void setWarrantyExpireYear(int warrantyExpireYear) {
+        this.warrantyExpireYear = warrantyExpireYear;
+    }
+
+    public String getLastMaintenance() {
+        return lastMaintenance;
+    }
+
+    public void setLastMaintenance(String lastMaintenance) {
+        this.lastMaintenance = lastMaintenance;
+    }
+
+    public int getBaseMaintenanceFee() {
+        return baseMaintenanceFee;
+    }
+
+    public void setBaseMaintenanceFee(int baseMaintenanceFee) {
+        this.baseMaintenanceFee = baseMaintenanceFee;
+    }
+
     public abstract int calculateYearlyDepreciationRate();
 
-    public abstract int calculateExpectedPrice();
+    public abstract int calculateExpectedPrice(int basePrice);
 
-    public abstract boolean compareToSpec(Spec spec, double percentMatch);
+    public abstract boolean equals(Spec spec, double percentMatch);
 
-    public int calculateValueAfterYear(int year){
+    public int calculateValueAfterYear(int basePrice, int year){
         int depreciationRate = calculateYearlyDepreciationRate();
-        int price = calculateExpectedPrice();
+        int price = calculateExpectedPrice(basePrice);
         
         return calculateValueAfterYear(year, depreciationRate, price);
     }
