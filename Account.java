@@ -13,5 +13,5 @@ abstract class Account {
         isFamily = false;
     }
 
-    abstract boolean validate();
+    abstract boolean validate(Vehicle[] vehicles);
 } 

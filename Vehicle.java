@@ -7,4 +7,8 @@ public class Vehicle {
     public double getBasePrice() {
         return 0;
     }
+
+    public String getVIN() {
+        return null;
+    }
 }

@@ -49,8 +49,8 @@ public class BuyerAccount extends Account {
         rangeOfAccept = newRange;
     }
     
-    public boolean validate() {
-        return true;
+    public boolean validate(Vehicle[] vehicles) {
+        return budget >= findLowestInApplicable(vehicles);
     }
 
     public Vehicle[] showAllApplicableVehicles(Vehicle[] vehicles) {
