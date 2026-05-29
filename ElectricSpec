@@ -1,37 +1,37 @@
-public class HybridSpec extends Spec {
+public class ElectricSpec extends Spec {
 
-    public static int DEPRECIATE_FUELEFF = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_VALUE = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_RATE = 10; // can change
+    public static int BIG_FUELCAP = 50; // can change
+    public static int BIG_FUELCAP_BY_PRICE = 20; //
+    public static int BIG_FUELCAP_BY_RATE = 10; // can change
     public static int DEPRECIATE_CHARGING_TIME = 10; // can change
     public static int DEPRECIATE_CHARGING_TIME_BY_VALUE = 10; // can change
     public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; // can change
 
-    private int powerReturnRate;
+    private double batteryHealthPercentage;
     private int chargingTime;
-    private int fuelEfficiency;
 
-    public HybridSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, int powerReturnRate, int chargingTime, int fuelEfficiency) {
+    public GasSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, 
+        String engineType, int fuelCapacity, int fuelEfficiency) {
         super(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee);
-        this.powerReturnRate = powerReturnRate;
-        this.chargingTime = chargingTime;
+        this.engineType = engineType;
+        this.fuelCapacity = fuelCapacity;
         this.fuelEfficiency = fuelEfficiency;
     }
 
-    public int getPowerReturnRate() {
-        return powerReturnRate;
+    public String getEngineType() {
+        return engineType;
     }
 
-    public void setPowerReturnRate(int powerReturnRate) {
-        this.powerReturnRate = powerReturnRate;
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
     }
 
-    public int getChargingTime() {
-        return chargingTime;
+    public int getFuelCapacity() {
+        return fuelCapacity;
     }
 
-    public void setChargingTime(int chargingTime) {
-        this.chargingTime = chargingTime;
+    public void setFuelCapacity(int fuelCapacity) {
+        this.fuelCapacity = fuelCapacity;
     }
 
     public int getFuelEfficiency() {
@@ -46,31 +46,14 @@ public class HybridSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        if (age >= DEPRECIATE_AGE) {
-            temp += DEPRECIATE_AGE_BY_RATE;
-        }
-        if (mileage >= DEPRECIATE_MILEAGE) {
-            temp += DEPRECIATE_MILEAGE_BY_RATE;
-        }
-
-        return temp;
-    }
-
-    @Overload
-    public int calculateYearlyDepreciationRate(boolean isRechargeable) {
-        int temp = 0;
-
-        if (isRechargeable) {
-            if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
-                temp += DEPRECIATE_CHARGING_TIME_BY_RATE;
-            }
+        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+            temp += DEPRECIATE_FUELEFF_BY_RATE;
         }
 
         if (age >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
-        }
         if (mileage >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
@@ -86,10 +69,6 @@ public class HybridSpec extends Spec {
             temp += DEPRECIATE_FUELEFF_BY_PRICE;
         }
 
-        if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
-            temp += DEPRECIATE_CHARGING_TIME_BY_PRICE;
-        }
-
         if (age >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
@@ -100,36 +79,35 @@ public class HybridSpec extends Spec {
         return basePrice - temp;    
     }
 
-    @Override
     public boolean equals(Spec spec, double percentMatch) {
-        if (spec == null || !(spec instanceof HybridSpec)) {
+        if (spec == null || !(spec instanceof GasSpec)) {
             return false;
         } else {
-            HybridSpec hybridSpec = (HybridSpec) spec;
+            GasSpec gasSpec = (GasSpec) spec;
             int matchCount = 0;
             int totalCount = 0;
 
-            if (this.powerReturnRate >= hybridSpec.powerReturnRate) {
+            if (this.engineType.equals(gasSpec.engineType)) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.chargingTime <= hybridSpec.chargingTime) {
+            if (this.fuelCapacity >= gasSpec.fuelCapacity) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.fuelEfficiency >= hybridSpec.fuelEfficiency) {
+            if (this.fuelEfficiency >= gasSpec.fuelEfficiency) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.age <= hybridSpec.age) {
+            if (this.age <= gasSpec.age) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.mileage <= hybridSpec.mileage) {
+            if (this.mileage <= gasSpec.mileage) {
                 matchCount++;
             }
             totalCount++;
@@ -139,11 +117,11 @@ public class HybridSpec extends Spec {
         }
     }
 
-    @Override
     public String toString() {
         String temp = "";
-        temp += "Power Return Rate: " + powerReturnRate + "\n";
-        temp += "Charging Time: " + chargingTime + "\n";
+        temp += "Gas Spec:\n";
+        temp += "Engine Type: " + engineType + "\n";
+        temp += "Fuel Capacity: " + fuelCapacity + "\n";
         temp += "Fuel Efficiency: " + fuelEfficiency + "\n";
         return super.toString() + temp;
     }
