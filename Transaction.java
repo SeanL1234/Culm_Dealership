@@ -109,8 +109,8 @@ public class Transaction {
    
    // Constructor  !WIP need Customer
    public Transaction(Customer customer, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle vehicle){
-      this.customerName = customer.name;
-      this.customerID = customer.id;
+      this.customerName = customer.getName();
+      this.customerID = customer.getId();
       this.finalPrice = finalPrice;
       this.isTradeIn = isTradeIn;
       this.isSold = isSold;
