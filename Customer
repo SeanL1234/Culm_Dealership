@@ -1,0 +1,90 @@
+/**
+ * Customer.java
+ *
+ * Represents a customer with loyalty points, accounts, and transaction history.
+ * Provides methods for loyalty comparison and status checks.
+ */
+import java.io.*;
+
+public class Customer{
+    
+    public static int LOYAL_THRESHOLD = 5; // can change
+    public static int LOYAL_RANGE = 10; // can change
+    public static int LOYAL_MULTIPLIER = 10; // can change
+    public static int NEW_MULTIPLIER = 10; // can change
+
+    private int bargainingRange;
+    private int loyaltyPoint;
+    private String name;
+    private String id;
+    private Account[] customerAccount;
+    private Transaction[] customerTransactionHistory;
+
+
+    /**
+     * Constructs a Customer with the provided name, id, account list, and transaction history.
+     *
+     * @param name the customer's name
+     * @param id the customer's identifier
+     * @param customerAccount the customer's accounts
+     * @param customerTransactionHistory the customer's transaction history
+     */
+    public Customer(String name, String id, Account[] customerAccount, Transaction[] customerTransactionHistory) {
+        this.name = name;
+        this.id = id;
+        this.customerAccount = customerAccount;
+        this.customerTransactionHistory = customerTransactionHistory;
+    }
+
+    /**
+     * Constructs a Customer from a file containing customer data.
+     *
+     * @param fileName path to the file containing customer information
+     */
+    public Customer(String fileName){
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            name = in.readLine();
+            id = in.readLine();
+            loyaltyPoint = Integer.parseInt(in.readLine());
+            // accounts and transaction format goes here, too lazy to write
+            in.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }
+        
+    }
+    
+     /**
+     * Compares this customer's loyalty points to another customer's loyalty points.
+     *
+     * @param other the customer to compare against
+     * @return 1 if this customer has more loyalty points or if other is null,
+     *         -1 if this customer has fewer loyalty points,
+     *         0 if both have the same loyalty points
+     */
+    public int compareToLoyaltyPoints(Customer other) {
+        if (other == null || this.loyaltyPoint > other.loyaltyPoint){
+            return 1;
+        } else if (this.loyaltyPoint < other.loyaltyPoint) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Determines whether the customer is loyal based on their loyalty points.
+     *
+     * @return true if the customer's loyalty points are greater than or equal to the loyalty threshold,
+     *         otherwise false
+     */
+    public boolean isLoyal() {
+        return loyaltyPoint >= LOYAL_THRESHOLD;
+    }
+
+    public String generateUID(){
+
+    }
+
+}
