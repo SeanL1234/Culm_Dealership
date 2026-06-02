@@ -183,6 +183,15 @@ public class TradeInAccount extends Account {
         return rating < BAD_THRESHOLD;
     }
 
+    public boolean tradeVehicle(Vehicle tradeFor) {
+        if(vehicleForTrading.getBasePrice() < tradeFor.getBasePrice() - rangeOfAccept) {
+            return true;
+        } else if(vehicleForTrading.getBasePrice() < tradeFor.getBasePrice()) {
+            return Math.random() > 0.5;
+        }
+        return false;
+    }
+
     /**
      * Returns a string representation of the TradeInAccount.
      * @return String containing trade-in customer information including vehicle, rating, expectations, and percent match
