@@ -27,43 +27,33 @@ public class Transaction {
    public String getCustomerName(){
       return customerName;
    }
-   
    public String getCustomerID(){
       return customerID;
    }
-   
    public int getFinalPrice(){
       return finalPrice;
    }
-   
    public boolean getIsTradeIn(){
       return isTradeIn;
    }
-   
    public boolean getIsSold(){
       return isSold;
    }
-   
    public boolean getIsBought(){
       return isBought;
    }
-   
    public boolean getIsLease(){
       return isLease;
    }
-   
    public int getMonth(){
       return month;
    }
-   
    public int getDate(){
       return date;
    }
-   
    public int getYear(){
       return year;
    }
-   
    public Vehicle getVehicle(){
       return vehicle;
    }
@@ -73,7 +63,6 @@ public class Transaction {
    public void setcustomerName(String customerName){
       this.customerName = customerName;
    }
-   
    public void setCustomerID (String customerID){
       this.customerID = customerID;
    }
@@ -105,9 +94,7 @@ public class Transaction {
       this.vehicle = vehicle;
    }
    
-   
-   
-   // Constructor  !WIP need Customer
+
    public Transaction(Customer customer, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle vehicle){
       this.customerName = customer.getName();
       this.customerID = customer.getId();
@@ -122,11 +109,27 @@ public class Transaction {
       this.vehicle = vehicle;
    }
    
+   public int determineProfitMade(){
+      return finalPrice-vehicle.getBasePrice();
+   }
    
+   public boolean wasProfitable(){
+      return finalPrice>vehicle.getBasePrice();
+   }
    
+   public String toString(){
+      return "Customer Name: "+ customerName+
+         "\nCustomer ID: "+customerID+
+         "\nFinal Price: "+finalPrice+
+         "\nIs TradeIn: "+isTradeIn+
+         "\nIs Sold: "+ isSold+
+         "\nIs Bought: "+isBought+
+         "\nIs Lease: "+isLease+
+         "\nMonth: "+ month+
+         "\nDate: "+ date+
+         "\nYear: "+ year+
+         vehicle.displayEssentials();
+   }
    
-   
-   
-   
-   
+
 }

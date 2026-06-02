@@ -8,10 +8,10 @@ Description: The Vehicle class.
 public class Vehicle {
 
    // Constans
-   public static final double CHEAP_RANG = 0.2;
-   public static final int FF_NUMSEATS = 4;
+   public static final double CHEAP_RANGE = 0.2;
+   public static final int FF_NUMSEATS = 5;
    public static final int FF_SAFETYRATING = 8;
-   public static final String FF_WHEELCONTROL = " ";
+   public static final String FF_WHEELCONTROL = "AWD";
    
    // Fields
    private String modelName;
@@ -202,21 +202,21 @@ public class Vehicle {
       if(!(other instanceof Vehicle)){
          return false;
       }else{
-         return this.modelName == other.modelName &&
-            this.modelBrand == modelBrand &&
-            this.typeVehicle == other.typeVehicle&&
+         return this.modelName.equals(other.modelName) &&
+            this.modelBrand.equals(modelBrand) &&
+            this.typeVehicle.equals(other.typeVehicle)&&
             this.year == other.year&&
             this.basePrice == other.basePrice&&
             this.safetyRating == other.safetyRating&&
-            this.vin == other.vin&&
+            this.vin.equals(other.vin)&&
             this.towRating == other.towRating&&
-            this.typeWheelControl == other.typeWheelControl&&
-            this.transmissionType == other.transmissionType&&
-            this.trimLevel == other.trimLevel&&
+            this.typeWheelControl.equals(other.typeWheelControl)&&
+            this.transmissionType.equals(other.transmissionType)&&
+            this.trimLevel.equals(other.trimLevel)&&
             this.maxSpeed == other.maxSpeed&&
             this.numSeats == other.numSeats&&
-            this.color == other.color&&
-            this.maintenancePeriod == other.maintenancePeriod&&
+            this.color.equals(other.color)&&
+            this.maintenancePeriod.equals(other.maintenancePeriod)&&
             this.range == other.range&&
             this.vehicleSpec.equals(other.vehicleSpec);
             // Using the equals methoeds in Spec !!!
@@ -227,9 +227,8 @@ public class Vehicle {
       return this.basePrice-other.basePrice;
    }
    
-   //!WIP need calculateExpectedPrice() from Spec
    public boolean isCheap(){
-      return false;
+      return vehicleSpec.calculateExpectedPrice()<basePrice+(basePrice*CHEAP_RANGE);
    }
    
    //!WIP need typeWheelControl
@@ -248,7 +247,23 @@ public class Vehicle {
    //}
    
    public String toString(){
-      return "Model: "+ modelName+"\nBrand: "+modelBrand+"\nType Vehicle: "+ typeVehicle+"\nYear: "+ year+"\nBase Price: "+basePrice+"\nSafety Rating: "+safetyRating+"\nVIN:"+vin+"\nTow Rating: "+towRating+"\nWheel Control: "+typeWheelControl+"\nTransmission Type: "+transmissionType+"\nTrim Level: "+trimLevel+"\nMax Speed: "+maxSpeed+"\nNum Seats: "+numSeats+"\nColor:"+color+"\nMaintenance Period: "+ maintenancePeriod+"\nRange: "+range+"\nVehicle Spec: "+vehicleSpec;
+      return "Model: "+ modelName+
+         "\nBrand: "+modelBrand+
+         "\nType Vehicle: "+ typeVehicle+
+         "\nYear: "+ year+
+         "\nBase Price: "+basePrice+
+         "\nSafety Rating: "+safetyRating+
+         "\nVIN:"+vin+
+         "\nTow Rating: "+towRating+
+         "\nWheel Control: "+typeWheelControl+
+         "\nTransmission Type: "+transmissionType+
+         "\nTrim Level: "+trimLevel+
+         "\nMax Speed: "+maxSpeed+
+         "\nNum Seats: "+numSeats+
+         "\nColor:"+color+
+         "\nMaintenance Period: "+ maintenancePeriod+
+         "\nRange: "+range+
+         "\nVehicle Spec: "+vehicleSpec;
    
    }
    

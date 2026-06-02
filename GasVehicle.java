@@ -7,7 +7,7 @@ Description: The GasVehicle class.
 */
 public class GasVehicle extends Vehicle{
 
-   public static final int ENGINE_PRICE = 4000;
+   public static final int ENGINE_PRICE = 400;
 
    private int maxHorsePower;
    private GasSpec gasSpec;
@@ -34,10 +34,13 @@ public class GasVehicle extends Vehicle{
       this.maxHorsePower = maxHorsePower;
    }
 
-   // calculateMaintenanceFee() pending
-
+   public int calculateMaintenanceFee(){
+      return gasSpec.getBaseMaintenanceFee()+ENGINE_PRICE;
+   }
+   
    public String toString(){
-      return super.toString()+"\nMax Horse Power: "+maxHorsePower;
+      return super.toString()+
+         "\nMax Horse Power: "+maxHorsePower;
    }
 
 }

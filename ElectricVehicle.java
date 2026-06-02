@@ -6,9 +6,9 @@ Date: May 28, 2026
 Description: The ElectricVehicle class.
 */
 public class ElectricVehicle extends Vehicle{
-   public static final int AUTO_PILOT_PRICE = 400;
-   public static final int BATTERY_PRICE = 10000;
-   public static final int MODES_PRICE = 1600;
+   public static final int AUTO_PILOT_PRICE = 50;
+   public static final int BATTERY_PRICE = 300;
+   public static final int MODES_PRICE = 50;
 
    private boolean hasAutoPilot;
    private boolean hasModes;
@@ -50,9 +50,23 @@ public class ElectricVehicle extends Vehicle{
       this.chargerType = chargerType;
    }
 
-   // calculateMaintenanceFee() pending
+
+   public int calculateMaintenanceFee(){
+      int temp = 0;
+      if(hasAutoPilot){
+         temp+=AUTO_PILOT_PRICE;
+      }
+      if(hasModes){
+         temp+=MODES_PRICE;
+      }
+      return electricSpec.getBaseMaintenanceFee()+BATTERY_PRICE+temp;
+   }
+   
 
    public String toString(){
-      return super.toString()+"\nHas Autopilot: "+hasAutoPilot+"\nHas Modes: "+hasModes+"\nCharger Type: "+chargerType;
+      return super.toString()+
+         "\nHas Autopilot: "+hasAutoPilot+
+         "\nHas Modes: "+hasModes+
+         "\nCharger Type: "+chargerType;
    }
 }

@@ -7,9 +7,9 @@ Description: The HybridVehicle class.
 */
 public class HybridVehicle extends Vehicle{
 
-   public static final int RECHARGEABLE_PRICE = 6000;
-   public static final int MODES_PRICE = 1600;
-   public static final int PLUG_IN_PRICE = 400;
+   public static final int RECHARGEABLE_PRICE = 80;
+   public static final int MODES_PRICE = 40;
+   public static final int PLUG_IN_PRICE = 80;
    
    private HybridSpec hybridSpec;
    private boolean isRechargeable;
@@ -60,11 +60,27 @@ public class HybridVehicle extends Vehicle{
    }
 
 
-   // calculateMaintenanceFee() pending
+   public int calculateMaintenanceFee(){
+      int temp = 0;
+      if(isRechargeable){
+         temp+=RECHARGEABLE_PRICE;
+      }
+      if(hasModes){
+         temp+=MODES_PRICE;
+      }
+      if(hasPlugIn){
+         temp+=PLUG_IN_PRICE;
+      }
+      return hybridSpec.getBaseMaintenanceFee()+temp;
+   }
 
 
    public String toString(){
-      return super.toString()+"\nIs Rechargeable: "+isRechargeable+"\nHas Modes: "+hasModes+"\nhas PlugIn: "+hasPlugIn+"\nCharger Type: "+chargerType;
+      return super.toString()+
+         "\nIs Rechargeable: "+isRechargeable+
+         "\nHas Modes: "+hasModes+
+         "\nhas PlugIn: "+hasPlugIn+
+         "\nCharger Type: "+chargerType;
    }
 
 }
