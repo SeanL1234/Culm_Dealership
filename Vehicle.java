@@ -5,7 +5,7 @@ Class: ICS4U1-21
 Date: May 28, 2026
 Description: The Vehicle class.
 */
-public class Vehicle {
+abstract class Vehicle {
 
    // Constans
    public static final double CHEAP_RANGE = 0.2;
@@ -241,10 +241,7 @@ public class Vehicle {
       return "VIN: "+vin +"\nModel: "+ modelName +"\nBrand: "+ modelBrand +"\nYear: "+ year +"\nColor: "+color;
    }
    
-   //!WIP need Spec, issue with abstract in non-abstract class
-   //abstract int calculateMaintenanceFee(){
-   //   return 0;
-   //}
+   abstract int calculateMaintenanceFee();
    
    public String toString(){
       return "Model: "+ modelName+
