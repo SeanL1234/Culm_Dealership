@@ -125,7 +125,7 @@ public abstract class Spec {
 
     public abstract int calculateExpectedPrice(int basePrice);
 
-    public abstract boolean equals(Spec spec, double percentMatch);
+    public abstract boolean equals(Object spec, double percentMatch);
 
     /**
      * Calculates the expected value of the vehicle after the given number of years.

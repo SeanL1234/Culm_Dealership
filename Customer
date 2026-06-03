@@ -21,6 +21,7 @@ public class Customer{
     private Transaction[] customerTransactionHistory;
 
 
+
     /**
      * Constructs a Customer with the provided name, id, account list, and transaction history.
      *
@@ -49,8 +50,8 @@ public class Customer{
             loyaltyPoint = Integer.parseInt(in.readLine());
             // accounts and transaction format goes here, too lazy to write
             in.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        } catch (IOException iox) {
+            System.out.println("An error occurred while reading the file");
         }
         
     }
@@ -83,8 +84,108 @@ public class Customer{
         return loyaltyPoint >= LOYAL_THRESHOLD;
     }
 
-    public String generateUID(){
+    public int getBargainingRange() {
+        return bargainingRange;
+    }
 
+    public void setBargainingRange(int bargainingRange) {
+        this.bargainingRange = bargainingRange;
+    }
+
+    public int getLoyaltyPoint() {
+        return loyaltyPoint;
+    }
+
+    public void setLoyaltyPoint(int loyaltyPoint) {
+        this.loyaltyPoint = loyaltyPoint;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Account[] getCustomerAccount() {
+        return customerAccount;
+    }
+
+    public void setCustomerAccount(Account[] customerAccount) {
+        this.customerAccount = customerAccount;
+    }
+
+    public Transaction[] getCustomerTransactionHistory() {
+        return customerTransactionHistory;
+    }
+
+    public void setCustomerTransactionHistory(Transaction[] customerTransactionHistory) {
+        this.customerTransactionHistory = customerTransactionHistory;
+    }
+
+    public String generateUID(){
+        String nameArray = name.split(" ");
+        String uid = nameArray[0].charAt(0) + nameArray[1].charAt(0);
+        return generateUID(uid, 0);
+    }
+
+    public String generateUID(String uid, int index){
+        if (index == 5){
+            return uid;
+        } else {
+            uid += (int)(Math.random() * 10);
+            return generateUID(uid, index + 1);
+        }
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof Customer)) {
+            return false;
+        } else if (obj == this) {
+            return true;
+        } else {
+            Customer other = (Customer) obj;
+            return this.id.equals(other.id);
+        }
+    }
+
+     /**
+     * Generates a randomized deal price for the customer based on loyalty status.
+     * Loyal customers receive a deal based on the loyal range and multiplier.
+     * New customers receive a deal based on the loyal range and new multiplier.
+     *
+     * @return a randomized deal price
+     */
+    public int getRandomizedDealPrice(){
+        if (isLoyal()) {
+            return (int) (Math.random() * LOYAL_RANGE * LOYAL_MULTIPLIER);
+        } else {
+            return (int) (Math.random() * LOYAL_RANGE * NEW_MULTIPLIER);
+        }
+    }
+
+    public String toString(){
+        String temp = "";
+        temp += "Customer Name: " + name + "\n";
+        temp += "Customer ID: " + id + "\n";
+        temp += "Loyalty Points: " + loyaltyPoint + "\n";
+        return temp;
+    }
+
+    public String getEssentialInfo(){
+        String temp = "";
+        temp += "Customer Name: " + name + "\n";
+        temp += "Customer ID: " + id + "\n";
+        return temp;
     }
 
 }

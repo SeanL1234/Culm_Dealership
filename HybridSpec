@@ -46,10 +46,10 @@ public class HybridSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        if (age >= DEPRECIATE_AGE) {
+        if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 
@@ -66,12 +66,12 @@ public class HybridSpec extends Spec {
             }
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
         }
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 
@@ -90,10 +90,10 @@ public class HybridSpec extends Spec {
             temp += DEPRECIATE_CHARGING_TIME_BY_PRICE;
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_PRICE;
         }
 
@@ -101,9 +101,11 @@ public class HybridSpec extends Spec {
     }
 
     @Override
-    public boolean equals(Spec spec, double percentMatch) {
+    public boolean equals(Object spec, double percentMatch) {
         if (spec == null || !(spec instanceof HybridSpec)) {
             return false;
+        } else if (spec == this) {
+            return true;
         } else {
             HybridSpec hybridSpec = (HybridSpec) spec;
             int matchCount = 0;
@@ -124,12 +126,12 @@ public class HybridSpec extends Spec {
             }
             totalCount++;
 
-            if (this.age <= hybridSpec.age) {
+            if (this.getAge() <= hybridSpec.getAge()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.mileage <= hybridSpec.mileage) {
+            if (this.getMileage() <= hybridSpec.getMileage()) {
                 matchCount++;
             }
             totalCount++;

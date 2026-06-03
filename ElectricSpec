@@ -10,6 +10,22 @@ public class ElectricSpec extends Spec {
     private double batteryHealthPercentage;
     private int chargingTime;
 
+    public double getBatteryHealthPercentage() {
+        return batteryHealthPercentage;
+    }
+
+    public void setBatteryHealthPercentage(double batteryHealthPercentage) {
+        this.batteryHealthPercentage = batteryHealthPercentage;
+    }
+
+    public int getChargingTime() {
+        return chargingTime;
+    }
+
+    public void setChargingTime(int chargingTime) {
+        this.chargingTime = chargingTime;
+    }
+
     /**
      * Constructor for ElectricSpec.
      * Initializes an ElectricSpec object with vehicle specifications and electric vehicle properties.
@@ -32,54 +48,6 @@ public class ElectricSpec extends Spec {
     }
 
     /**
-     * Gets the engine type of the vehicle.
-     * @return the engine type as a String
-     */
-    public String getEngineType() {
-        return engineType;
-    }
-
-    /**
-     * Sets the engine type of the vehicle.
-     * @param engineType the engine type to set
-     */
-    public void setEngineType(String engineType) {
-        this.engineType = engineType;
-    }
-
-    /**
-     * Gets the fuel capacity of the vehicle.
-     * @return the fuel capacity in liters or gallons
-     */
-    public int getFuelCapacity() {
-        return fuelCapacity;
-    }
-
-    /**
-     * Sets the fuel capacity of the vehicle.
-     * @param fuelCapacity the fuel capacity to set
-     */
-    public void setFuelCapacity(int fuelCapacity) {
-        this.fuelCapacity = fuelCapacity;
-    }
-
-    /**
-     * Gets the fuel efficiency rating of the vehicle.
-     * @return the fuel efficiency value
-     */
-    public int getFuelEfficiency() {
-        return fuelEfficiency;
-    }
-
-    /**
-     * Sets the fuel efficiency rating of the vehicle.
-     * @param fuelEfficiency the fuel efficiency value to set
-     */
-    public void setFuelEfficiency(int fuelEfficiency) {
-        this.fuelEfficiency = fuelEfficiency;
-    }
-
-    /**
      * Calculates the yearly depreciation rate based on fuel efficiency, age, and mileage.
      * Returns a cumulative depreciation percentage based on multiple factors.
      * @return the calculated yearly depreciation rate
@@ -88,15 +56,15 @@ public class ElectricSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+        if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
             temp += DEPRECIATE_FUELEFF_BY_RATE;
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 
@@ -113,14 +81,14 @@ public class ElectricSpec extends Spec {
     public int calculateExpectedPrice(int basePrice) {
         int temp = 0;
                 
-        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+        if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
             temp += DEPRECIATE_FUELEFF_BY_PRICE;
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_PRICE;
         }
 
@@ -135,10 +103,12 @@ public class ElectricSpec extends Spec {
      * @return true if the match percentage meets or exceeds the threshold; false otherwise
      */
     @Override
-    public boolean equals(Spec spec, double percentMatch) {
+    public boolean equals(Object spec, double percentMatch) {
         if (spec == null || !(spec instanceof GasSpec)) {
             System.out.println("Not a GasSpec");
             return false;
+        } else if (spec == this) {
+            return true;
         } else {
             GasSpec gasSpec = (GasSpec) spec;
             int matchCount = 0;
@@ -149,22 +119,22 @@ public class ElectricSpec extends Spec {
             }
             totalCount++;
 
-            if (this.fuelCapacity >= gasSpec.fuelCapacity) {
+            if (this.getFuelCapacity() >= gasSpec.getFuelCapacity()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.fuelEfficiency >= gasSpec.fuelEfficiency) {
+            if (this.getFuelEfficiency() >= gasSpec.getFuelEfficiency()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.age <= gasSpec.age) {
+            if (this.getAge() <= gasSpec.getAge()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.mileage <= gasSpec.mileage) {
+            if (this.getMileage() <= gasSpec.getMileage()) {
                 matchCount++;
             }
             totalCount++;
@@ -177,7 +147,7 @@ public class ElectricSpec extends Spec {
             return result;
         }
     }
-    
+
     /**
      * Returns a string representation of the ElectricSpec object.
      * Includes engine type, fuel capacity, fuel efficiency, and inherited spec properties.
