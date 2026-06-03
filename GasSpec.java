@@ -1,3 +1,12 @@
+/**
+ * GasSpec.java
+ * Author: Fabian Hui
+ * Teacher: Ms. Lam
+ * Date: June 3, 2026
+ * 
+ * Description: [TODO: Add description]
+ */
+
 public class GasSpec extends Spec {
 
     public static int BIG_FUELCAP = 50; // can change

@@ -1,3 +1,12 @@
+/**
+ * HybridSpec.java
+ * Author: Fabian Hui
+ * Teacher: Ms. Lam
+ * Date: June 3, 2026
+ * 
+ * Description: [TODO: Add description]
+ */
+
 public class HybridSpec extends Spec {
 
     public static int DEPRECIATE_FUELEFF = 10; // can change

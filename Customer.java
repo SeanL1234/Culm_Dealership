@@ -1,10 +1,13 @@
 /**
  * Customer.java
- *
- * Represents a customer with loyalty points, accounts, and transaction history.
- * Provides methods for loyalty comparison and status checks.
+ * Author: Fabian Hui
+ * Teacher: Ms. Lam
+ * Date: June 3, 2026
+ * 
+ * Description: [TODO: Add description]
  */
-import java.io.*;
+
+import java.io.*; // idk if i want this to stay 
 
 public class Customer{
     
