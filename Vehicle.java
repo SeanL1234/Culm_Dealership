@@ -192,16 +192,17 @@ abstract class Vehicle {
       this.vehicleSpec = vehicleSpec;
    }
    
-   public boolean equals(Vehicle other){
-      if(other == null){
+   public boolean equals(Object obj){
+      if(obj == null){
          return false;
       }
-      if(this == other){
+      if(this == obj){
          return true;
       }
-      if(!(other instanceof Vehicle)){
+      if(!(obj instanceof Vehicle)){
          return false;
       }else{
+         Vehicle other = (Vehicle) obj;
          return this.modelName.equals(other.modelName) &&
             this.modelBrand.equals(modelBrand) &&
             this.typeVehicle.equals(other.typeVehicle)&&
