@@ -51,11 +51,11 @@ public class GasSpec extends Spec {
             temp += DEPRECIATE_FUELEFF_BY_RATE;
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 
@@ -70,17 +70,17 @@ public class GasSpec extends Spec {
             temp += DEPRECIATE_FUELEFF_BY_PRICE;
         }
 
-        if (age >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
-        if (mileage >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_PRICE;
         }
 
         return basePrice - temp;    
     }
 
-    public boolean equals(Spec spec, double percentMatch) {
+    public boolean equals(Object spec, double percentMatch) {
         if (spec == null || !(spec instanceof GasSpec)) {
             return false;
         } else {
@@ -103,12 +103,12 @@ public class GasSpec extends Spec {
             }
             totalCount++;
 
-            if (this.age <= gasSpec.age) {
+            if (super.getAge() <= gasSpec.getAge()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.mileage <= gasSpec.mileage) {
+            if (super.getMileage() <= gasSpec.getMileage()) {
                 matchCount++;
             }
             totalCount++;

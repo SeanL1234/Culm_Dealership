@@ -40,11 +40,10 @@ public class ElectricSpec extends Spec {
      * @param fuelEfficiency the fuel efficiency rating
      */
     public ElectricSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, 
-        String engineType, int fuelCapacity, int fuelEfficiency) {
+        double batteryHealthPercentage, int chargingTime) {
         super(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee);
-        this.engineType = engineType;
-        this.fuelCapacity = fuelCapacity;
-        this.fuelEfficiency = fuelEfficiency;
+        this.batteryHealthPercentage = batteryHealthPercentage;
+        this.chargingTime = chargingTime;
     }
 
     /**
@@ -56,9 +55,9 @@ public class ElectricSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
-            temp += DEPRECIATE_FUELEFF_BY_RATE;
-        }
+        // if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
+        //     temp += DEPRECIATE_FUELEFF_BY_RATE;
+        // }
 
         if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
@@ -81,9 +80,9 @@ public class ElectricSpec extends Spec {
     public int calculateExpectedPrice(int basePrice) {
         int temp = 0;
                 
-        if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
-            temp += DEPRECIATE_FUELEFF_BY_PRICE;
-        }
+        // if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
+        //     temp += DEPRECIATE_FUELEFF_BY_PRICE;
+        // }
 
         if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
@@ -114,20 +113,20 @@ public class ElectricSpec extends Spec {
             int matchCount = 0;
             int totalCount = 0;
 
-            if (this.engineType.equals(gasSpec.engineType)) {
-                matchCount++;
-            }
-            totalCount++;
+            // if (this.engineType.equals(gasSpec.engineType)) {
+            //     matchCount++;
+            // }
+            // totalCount++;
 
-            if (this.getFuelCapacity() >= gasSpec.getFuelCapacity()) {
-                matchCount++;
-            }
-            totalCount++;
+            // if (this.getFuelCapacity() >= gasSpec.getFuelCapacity()) {
+            //     matchCount++;
+            // }
+            // totalCount++;
 
-            if (this.getFuelEfficiency() >= gasSpec.getFuelEfficiency()) {
-                matchCount++;
-            }
-            totalCount++;
+            // if (this.getFuelEfficiency() >= gasSpec.getFuelEfficiency()) {
+            //     matchCount++;
+            // }
+            // totalCount++;
 
             if (this.getAge() <= gasSpec.getAge()) {
                 matchCount++;
@@ -155,10 +154,10 @@ public class ElectricSpec extends Spec {
      */
     public String toString() {
         String temp = "";
-        temp += "Gas Spec:\n";
-        temp += "Engine Type: " + engineType + "\n";
-        temp += "Fuel Capacity: " + fuelCapacity + "\n";
-        temp += "Fuel Efficiency: " + fuelEfficiency + "\n";
+        temp += "Electric Spec:\n";
+        // temp += "Engine Type: " + engineType + "\n";
+        // temp += "Fuel Capacity: " + fuelCapacity + "\n";
+        // temp += "Fuel Efficiency: " + fuelEfficiency + "\n";
         return super.toString() + temp;
     }
 }

@@ -1,10 +1,10 @@
 public class HybridSpec extends Spec {
 
     public static int DEPRECIATE_FUELEFF = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_VALUE = 10; // can change
+    public static int DEPRECIATE_FUELEFF_BY_PRICE = 10; // can change
     public static int DEPRECIATE_FUELEFF_BY_RATE = 10; // can change
     public static int DEPRECIATE_CHARGING_TIME = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME_BY_VALUE = 10; // can change
+    public static int DEPRECIATE_CHARGING_TIME_BY_PRICE = 10; // can change
     public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; // can change
 
     private int powerReturnRate;
@@ -56,7 +56,6 @@ public class HybridSpec extends Spec {
         return temp;
     }
 
-    @Overload
     public int calculateYearlyDepreciationRate(boolean isRechargeable) {
         int temp = 0;
 
@@ -70,8 +69,7 @@ public class HybridSpec extends Spec {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
-        }
-        if (getMileage() >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 

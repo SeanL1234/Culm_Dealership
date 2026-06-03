@@ -102,7 +102,7 @@ public class SellerAccount extends Account {
      */
     public boolean vehicleAlreadyExists(Vehicle[] inventory) {
         for(int i = 0; i < inventory.length; i++) {
-            if(inventory[i].getVIN().equals(ownedVehicle.getVIN())) {
+            if(inventory[i].getVin().equals(ownedVehicle.getVin())) {
                 return true;
             }
         }
