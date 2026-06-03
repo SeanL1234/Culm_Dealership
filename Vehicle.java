@@ -228,7 +228,7 @@ abstract class Vehicle {
    }
    
    public boolean isCheap(){
-      return vehicleSpec.calculateExpectedPrice()<basePrice+(basePrice*CHEAP_RANGE);
+      return vehicleSpec.calculateExpectedPrice(basePrice) < basePrice + (basePrice*CHEAP_RANGE);
    }
    
    //!WIP need typeWheelControl

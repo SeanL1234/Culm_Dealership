@@ -125,7 +125,7 @@ public class BuyerAccount extends Account {
             applicable = new Vehicle[getApplicableNum(vehicles)];
             int x = 0;
             for(int i = 0; i < vehicles.length; i++) {
-                if(vehicles[i].getSpec().compareToSpec(expectation, percentMatch)) {
+                if(vehicles[i].getVehicleSpec().equals(expectation, percentMatch)) {
                     applicable[x] = vehicles[i];
                     x++;
                 }   
@@ -143,7 +143,7 @@ public class BuyerAccount extends Account {
     public int getApplicableNum(Vehicle[] vehicles) {
         int counter = 0;
         for(int i = 0; i < vehicles.length; i++) {
-            if(vehicles[i].getVehicleSpec().compareToSpec(expectation, percentMatch)) {
+            if(vehicles[i].getVehicleSpec().equals(expectation, percentMatch)) {
                 counter++;
             }
         }
