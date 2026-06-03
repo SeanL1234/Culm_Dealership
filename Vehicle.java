@@ -219,7 +219,7 @@ abstract class Vehicle {
             this.color.equals(other.color)&&
             this.maintenancePeriod.equals(other.maintenancePeriod)&&
             this.range == other.range&&
-            this.vehicleSpec.equals(other.vehicleSpec);
+            this.vehicleSpec.equals(other.vehicleSpec,100);
             // Using the equals methoeds in Spec !!!
       }
    }
