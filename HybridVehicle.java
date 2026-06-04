@@ -1,4 +1,4 @@
-/* * 
+/** 
 * File Name: HybridVehicle.java
 * Name: Tommy Xiao
 * Class: ICS4U1-21
