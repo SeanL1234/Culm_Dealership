@@ -1,12 +1,12 @@
-/* 
-File Name: HybridVehicle.java
-Name: Tommy Xiao
-Class: ICS4U1-21
-Date: May 28, 2026
-Description: The HybridVehicle class represents a hybrid vehicle that combines
-features of both gasoline and electric-powered vehicles.
-It extends the Vehicle class and includes hybrid-specific
-specifications and charging features.
+/* * 
+* File Name: HybridVehicle.java
+* Name: Tommy Xiao
+* Class: ICS4U1-21
+* Date: May 28, 2026
+* Description: The HybridVehicle class represents a hybrid vehicle that combines
+* features of both gasoline and electric-powered vehicles.
+* It extends the Vehicle class and includes hybrid-specific
+* specifications and charging features.
 */
 public class HybridVehicle extends Vehicle{
 

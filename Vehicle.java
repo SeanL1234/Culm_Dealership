@@ -1,11 +1,11 @@
-/* 
-File Name: Vehicle.java
-Name: Tommy Xiao
-Class: ICS4U1-21
-Date: May 28, 2026
-Description: The Vehicle class serves as an abstract superclass for all vehicle types.
-It stores common vehicle information such as model details, pricing,
-specifications, performance data, and maintenance information.
+/** 
+* File Name: Vehicle.java
+* Name: Tommy Xiao
+* Class: ICS4U1-21
+* Date: May 28, 2026
+* Description: The Vehicle class serves as an abstract superclass for all vehicle types.
+* It stores common vehicle information such as model details, pricing,
+* specifications, performance data, and maintenance information.
 */
 abstract class Vehicle {
 
