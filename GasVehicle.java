@@ -38,7 +38,9 @@ public class GasVehicle extends Vehicle{
 
    /** @param maxHorsePower maximum horsepower */
    public void setMaxHorsePower(int maxHorsePower){
-      this.maxHorsePower = maxHorsePower;
+      if(maxHorsePower>0){
+         this.maxHorsePower = maxHorsePower;
+      }
    }
 
    /** @param gasSpec gas vehicle specifications */

@@ -121,7 +121,9 @@ public class Transaction {
 
    /** @param finalPrice final transaction price */
    public void setFinalPrice (int finalPrice){
-      this.finalPrice = finalPrice;
+      if(finalPrice>=0){
+         this.finalPrice = finalPrice;
+      }
    }
 
    /** @param isTradeIn trade-in status */
@@ -146,17 +148,23 @@ public class Transaction {
 
    /** @param month transaction month */
    public void setMonth (int month){
-      this.month = month;
+      if(month>0){
+         this.month = month;
+      }
    }
 
    /** @param date transaction day */
    public void setDate (int date){
-      this.date = date;
+      if(date>0){
+         this.date = date;
+      }
    }
 
    /** @param year transaction year */
    public void setYear (int year){
-      this.year = year;
+      if(year>=0){
+         this.year = year;
+      }
    }
 
    /** @param vehicle vehicle involved in the transaction */
