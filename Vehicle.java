@@ -182,17 +182,23 @@ abstract class Vehicle {
    
    /** @param year model year */
    public void setYear(int year){
-      this.year = year;
+      if(year>=0){
+         this.year = year;
+      }
    }
    
    /** @param basePrice vehicle base price */
    public void setBasePrice(int basePrice){
-      this.basePrice = basePrice;
+      if(basePrice>=0){
+         this.basePrice = basePrice;
+      }
    }
    
    /** @param safetyRating safety rating */
    public void setSafetyRating(int safetyRating){
-      this.safetyRating = safetyRating;
+      if(safetyRating>=0){
+         this.safetyRating = safetyRating;
+      }
    }
    
    /** @param vin vehicle identification number */
@@ -202,7 +208,9 @@ abstract class Vehicle {
    
    /** @param towRating towing capacity */
    public void setTowRating(int towRating){
-      this.towRating = towRating;
+      if(towRating>=0){
+         this.towRating = towRating;
+      }
    }
    
    /** @param typeWheelControl wheel control type */
@@ -222,12 +230,16 @@ abstract class Vehicle {
    
    /** @param maxSpeed maximum speed */
    public void setMaxSpeed(int maxSpeed){
-      this.maxSpeed = maxSpeed;
+      if(maxSpeed>=0){
+         this.maxSpeed = maxSpeed;
+      }
    }
    
    /** @param numSeats number of seats */
    public void setNumSeats(int numSeats){
-      this.numSeats = numSeats;
+      if(numSeats>=0){
+         this.numSeats = numSeats;
+      }
    }
    
    /** @param color vehicle color */
@@ -242,7 +254,9 @@ abstract class Vehicle {
    
    /** @param range vehicle driving range */
    public void setRange(int range){
-      this.range = range;
+      if(range>=0){
+         this.range = range;
+      }
    }
    
    /** @param vehicleSpec vehicle specifications */
@@ -366,7 +380,11 @@ abstract class Vehicle {
     * @return formatted string containing essential vehicle details
     */
    public String displayEssentials(){
-      return "VIN: "+vin +"\nModel: "+ modelName +"\nBrand: "+ modelBrand +"\nYear: "+ year +"\nColor: "+color;
+      return "VIN: "+vin +
+         "\nModel: "+ modelName +
+         "\nBrand: "+ modelBrand +
+         "\nYear: "+ year +
+         "\nColor: "+color;
    }
    
    /**
