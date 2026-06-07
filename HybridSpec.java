@@ -1,3 +1,12 @@
+/**
+ * HybridSpec.java
+ * Author: Fabian Hui
+ * Teacher: Ms. Lam
+ * Date: June 3, 2026
+ * 
+ * Description: [TODO: Add description]
+ */
+
 public class HybridSpec extends Spec {
 
     public static int DEPRECIATE_FUELEFF = 10; // can change
@@ -11,6 +20,17 @@ public class HybridSpec extends Spec {
     private int chargingTime;
     private int fuelEfficiency;
 
+    /**
+     * Constructs a HybridSpec object with hybrid vehicle specifications.
+     * @param mileage the current mileage of the vehicle
+     * @param age the age of the vehicle in years
+     * @param warrantyExpireYear the year the warranty expires
+     * @param lastMaintenance the date of last maintenance
+     * @param baseMaintenanceFee the base maintenance fee
+     * @param powerReturnRate the power return rate of the hybrid system
+     * @param chargingTime the charging time in minutes
+     * @param fuelEfficiency the fuel efficiency in mpg
+     */
     public HybridSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, int powerReturnRate, int chargingTime, int fuelEfficiency) {
         super(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee);
         this.powerReturnRate = powerReturnRate;
@@ -18,30 +38,58 @@ public class HybridSpec extends Spec {
         this.fuelEfficiency = fuelEfficiency;
     }
 
+    /**
+     * Gets the power return rate of the hybrid system.
+     * @return the power return rate
+     */
     public int getPowerReturnRate() {
         return powerReturnRate;
     }
 
+    /**
+     * Sets the power return rate of the hybrid system.
+     * @param powerReturnRate the power return rate to set
+     */
     public void setPowerReturnRate(int powerReturnRate) {
         this.powerReturnRate = powerReturnRate;
     }
 
+    /**
+     * Gets the charging time of the hybrid vehicle.
+     * @return the charging time in minutes
+     */
     public int getChargingTime() {
         return chargingTime;
     }
 
+    /**
+     * Sets the charging time of the hybrid vehicle.
+     * @param chargingTime the charging time in minutes to set
+     */
     public void setChargingTime(int chargingTime) {
         this.chargingTime = chargingTime;
     }
 
+    /**
+     * Gets the fuel efficiency of the hybrid vehicle.
+     * @return the fuel efficiency in mpg
+     */
     public int getFuelEfficiency() {
         return fuelEfficiency;
     }
 
+    /**
+     * Sets the fuel efficiency of the hybrid vehicle.
+     * @param fuelEfficiency the fuel efficiency in mpg to set
+     */
     public void setFuelEfficiency(int fuelEfficiency) {
         this.fuelEfficiency = fuelEfficiency;
     }
 
+    /**
+     * Calculates the yearly depreciation rate based on age and mileage.
+     * @return the yearly depreciation rate
+     */
     @Override
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
@@ -56,6 +104,11 @@ public class HybridSpec extends Spec {
         return temp;
     }
 
+    /**
+     * Calculates the yearly depreciation rate based on rechargeable status, age, and mileage.
+     * @param isRechargeable indicates if the hybrid vehicle is rechargeable
+     * @return the yearly depreciation rate
+     */
     public int calculateYearlyDepreciationRate(boolean isRechargeable) {
         int temp = 0;
 
@@ -76,6 +129,11 @@ public class HybridSpec extends Spec {
         return temp;
     }
 
+    /**
+     * Calculates the expected price based on depreciation factors.
+     * @param basePrice the base price of the vehicle
+     * @return the expected price after depreciation
+     */
     @Override
     public int calculateExpectedPrice(int basePrice) {
         int temp = 0;
@@ -97,7 +155,13 @@ public class HybridSpec extends Spec {
 
         return basePrice - temp;    
     }
-
+    
+    /**
+     * Compares this HybridSpec with another spec based on a percentage match threshold.
+     * @param spec the spec object to compare with
+     * @param percentMatch the percentage match threshold
+     * @return true if the match percentage is greater than or equal to the threshold, false otherwise
+     */
     @Override
     public boolean equals(Object spec, double percentMatch) {
         if (spec == null || !(spec instanceof HybridSpec)) {
@@ -139,6 +203,10 @@ public class HybridSpec extends Spec {
         }
     }
 
+    /**
+     * Returns a string representation of the HybridSpec object.
+     * @return a string containing the hybrid specifications and parent specifications
+     */
     @Override
     public String toString() {
         String temp = "";
