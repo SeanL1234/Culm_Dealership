@@ -195,9 +195,9 @@ public class Transaction {
     * @param year transaction year
     * @param vehicle vehicle involved in the transaction
     */
-   public Transaction(Customer customer, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle vehicle){
-      this.customerName = customer.getName();
-      this.customerID = customer.getId();
+   public Transaction(String customerName, String customerID, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle vehicle){
+      this.customerName = customerName;
+      this.customerID = customerID;
       this.finalPrice = finalPrice;
       this.isTradeIn = isTradeIn;
       this.isSold = isSold;
