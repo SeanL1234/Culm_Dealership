@@ -69,4 +69,20 @@ public class ElectricVehicle extends Vehicle{
          "\nHas Modes: "+hasModes+
          "\nCharger Type: "+chargerType;
    }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (obj == null) return false;
+      if (this == obj) return true;
+      if (!(obj instanceof ElectricVehicle)) return false;
+      ElectricVehicle other = (ElectricVehicle) obj;
+      boolean specEqual = true;
+      if (this.electricSpec == null) {
+         specEqual = other.electricSpec == null;
+      } else {
+         specEqual = this.electricSpec.equals(other.electricSpec, 100.0);
+      }
+      boolean chargerEqual = (this.chargerType == null) ? other.chargerType == null : this.chargerType.equals(other.chargerType);
+      return super.equals(obj) && this.hasAutoPilot == other.hasAutoPilot && this.hasModes == other.hasModes && chargerEqual && specEqual;
+   }
 }

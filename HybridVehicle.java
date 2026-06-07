@@ -83,4 +83,20 @@ public class HybridVehicle extends Vehicle{
          "\nCharger Type: "+chargerType;
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      if (obj == null) return false;
+      if (this == obj) return true;
+      if (!(obj instanceof HybridVehicle)) return false;
+      HybridVehicle other = (HybridVehicle) obj;
+      boolean specEqual = true;
+      if (this.hybridSpec == null) {
+         specEqual = other.hybridSpec == null;
+      } else {
+         specEqual = this.hybridSpec.equals(other.hybridSpec, 100.0);
+      }
+      boolean chargerEqual = (this.chargerType == null) ? other.chargerType == null : this.chargerType.equals(other.chargerType);
+      return super.equals(obj) && this.isRechargeable == other.isRechargeable && this.hasModes == other.hasModes && this.hasPlugIn == other.hasPlugIn && chargerEqual && specEqual;
+   }
+
 }
