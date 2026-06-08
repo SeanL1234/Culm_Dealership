@@ -26,12 +26,13 @@ public class TradeInAccount extends Account {
      * @param vehicleForTrading the Vehicle object being traded in
      * @param percentMatch the percentage match required for a vehicle to be considered applicable
      */
-    public TradeInAccount(boolean isOrgaization, boolean isFamily, Spec expectation, int rating, Vehicle vehicleForTrading, double percentMatch) {
+    public TradeInAccount(boolean isOrgaization, boolean isFamily, Spec expectation, int rating, Vehicle vehicleForTrading, double percentMatch, double rangeOfAccept) {
         super(isOrgaization, isFamily);
         this.expectation = expectation;
         this.rating = rating;
         this.vehicleForTrading = vehicleForTrading;
         this.percentMatch = percentMatch;
+        this.rangeOfAccept = rangeOfAccept;
     }
 
     /**

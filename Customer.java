@@ -33,11 +33,12 @@ public class Customer{
      * @param customerAccount the customer's accounts
      * @param customerTransactionHistory the customer's transaction history
      */
-    public Customer(String name, String id, Account[] customerAccount, Transaction[] customerTransactionHistory) {
+    public Customer(int loyaltyPoint, String name, String id, Account[] customerAccount, Transaction[] customerTransactionHistory) {
         this.name = name;
         this.id = id;
         this.customerAccount = customerAccount;
         this.customerTransactionHistory = customerTransactionHistory;
+        this.loyaltyPoint = loyaltyPoint;
     }
 
     /**

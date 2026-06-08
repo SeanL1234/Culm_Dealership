@@ -21,8 +21,8 @@ public class DealershipSystem {
                 String stat = read.readLine();
                 SellerAccount sellerAcc = null;
                 if(!stat.equals("null")) {
-                    boolean org = read.readLine().equals("N");
-                    boolean fam = read.readLine().equals("N");
+                    boolean org = stat.equals("Y");
+                    boolean fam = read.readLine().equals("Y");
                     int offered = Integer.parseInt(read.readLine());
                     int rating = Integer.parseInt(read.readLine());
                     String brandName = read.readLine();
@@ -81,13 +81,14 @@ public class DealershipSystem {
                         int fuelEfficiency = Integer.parseInt(read.readLine());
                         car = new HybridVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
                     }
-                    sellerAcc = new SellerAccount(org, fam, offered, rating, car);
+                    double rangeOfAccept = Double.parseDouble(read.readLine());
+                    sellerAcc = new SellerAccount(org, fam, offered, rating, car, rangeOfAccept);
                 }
                 String buyer = read.readLine();
                 stat = read.readLine();
                 BuyerAccount buyerAcc = null;
                 if(!stat.equals("null")) {
-                    boolean isOrganization = read.readLine().equals("Y");;
+                    boolean isOrganization = stat.equals("Y");;
                     boolean isFamily = read.readLine().equals("Y");
                     int budget = Integer.parseInt(read.readLine());
                     String typeCar = read.readLine();
@@ -125,13 +126,13 @@ public class DealershipSystem {
                     }
                     double percentMatch = Double.parseDouble(read.readLine());
                     double rangeOfAccept = Double.parseDouble(read.readLine());
-                    buyerAcc = new BuyerAccount(isOrganization, isFamily, budget, typeCar, expectation, percentMatch);
+                    buyerAcc = new BuyerAccount(isOrganization, isFamily, budget, typeCar, expectation, percentMatch, rangeOfAccept);
                 }
                 String trade = read.readLine();
                 stat = read.readLine();
                 TradeInAccount tradeAcc = null;
                 if(!stat.equals("null")) {
-                    boolean isOrganization = read.readLine().equals("Y");
+                    boolean isOrganization = stat.equals("Y");
                     boolean isFamily = read.readLine().equals("Y");
                     String brandName = read.readLine();
                     String modelName = read.readLine();
@@ -224,7 +225,7 @@ public class DealershipSystem {
                     }
                     double percentMatch = Double.parseDouble(read.readLine());
                     double rangeOfAccept = Double.parseDouble(read.readLine());
-                    tradeAcc = new TradeInAccount(isOrganization, isFamily, expectation, rating, car, percentMatch);
+                    tradeAcc = new TradeInAccount(isOrganization, isFamily, expectation, rating, car, percentMatch, rangeOfAccept);
                 }
                 
                 int numhistory = Integer.parseInt(read.readLine());
@@ -299,7 +300,7 @@ public class DealershipSystem {
                     transactions[x] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, car);
                 }
                 
-                customers[i] = new Customer(name, id, new Account[] {sellerAcc, buyerAcc, tradeAcc}, transactions);
+                customers[i] = new Customer(loyal, name, id, new Account[] {sellerAcc, buyerAcc, tradeAcc}, transactions);
             }
         
             read.close();
@@ -1368,11 +1369,12 @@ public class DealershipSystem {
     /**
      * Display all vehicles currently in inventory.
      */
-    public void displayInventory() {
-        if (vehicles == null) return;
+    public String displayInventory() {
+        String string = "";
         for (int i = 0; i < numCars; i++) {
-            if (vehicles[i] != null) System.out.println(vehicles[i].toString());
+            if (vehicles[i] != null) string += vehicles[i].toString() + "\n";
         }
+        return string;
     }
 
     /**
@@ -1431,7 +1433,9 @@ public class DealershipSystem {
                 String vin = in.readLine().trim();
                 Vehicle owned = null;
                 if (!vin.equalsIgnoreCase("none")) owned = searchVehicleByVIN(vin);
-                SellerAccount sa = new SellerAccount(org, fam, offered, rating, owned);
+                System.out.print("Range of accept (double): ");
+                double range = Double.parseDouble(in.readLine().trim());
+                SellerAccount sa = new SellerAccount(org, fam, offered, rating, owned, range);
                 target.createAccount("Seller", sa);
                 return true;
             } else if (t.equals("buyer")) {
@@ -1443,8 +1447,10 @@ public class DealershipSystem {
                 int budget = Integer.parseInt(in.readLine().trim());
                 System.out.print("Preferred car type (e.g., Gas/Electric/Hybrid): ");
                 String typeCar = in.readLine().trim();
+                System.out.print("Range of accept (double): ");
+                double range = Double.parseDouble(in.readLine().trim());
                 // For simple input, we'll not build a complex Spec here; set expectation to null and percentMatch to 1.0
-                BuyerAccount ba = new BuyerAccount(org, fam, budget, typeCar, null, 1.0);
+                BuyerAccount ba = new BuyerAccount(org, fam, budget, typeCar, null, 1.0, range);
                 target.createAccount("Buyer", ba);
                 return true;
             } else if (t.equals("tradein") || t.equals("trade-in") || t.equals("trade")) {
@@ -1458,8 +1464,10 @@ public class DealershipSystem {
                 String vin = in.readLine().trim();
                 Vehicle tradeVeh = null;
                 if (!vin.equalsIgnoreCase("none")) tradeVeh = searchVehicleByVIN(vin);
+                System.out.print("Range of accept (double): ");
+                double range = Double.parseDouble(in.readLine().trim());
                 // percentMatch default to 1.0
-                TradeInAccount ta = new TradeInAccount(org, fam, null, rating, tradeVeh, 1.0);
+                TradeInAccount ta = new TradeInAccount(org, fam, null, rating, tradeVeh, 1.0, range);
                 target.createAccount("TradeIn", ta);
                 return true;
             } else {

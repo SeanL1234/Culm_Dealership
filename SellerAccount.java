@@ -24,11 +24,12 @@ public class SellerAccount extends Account {
      * @param rating the seller's rating in the system
      * @param ownedVehicle the Vehicle object the seller is offering to sell
      */
-    public SellerAccount(boolean isOrgaization, boolean isFamily, int offeredPrice, int rating, Vehicle ownedVehicle) {
+    public SellerAccount(boolean isOrgaization, boolean isFamily, int offeredPrice, int rating, Vehicle ownedVehicle, double rangeOfAccept) {
         super(isOrgaization, isFamily);
         this.offeredPrice = offeredPrice;
         this.rating = rating;
         this.ownedVehicle = ownedVehicle;
+        this.rangeOfAccept = rangeOfAccept;
     }
 
     /**

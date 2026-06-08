@@ -16,9 +16,19 @@ public class DealershipGUI extends JFrame {
     private JButton btnReports;
 
     public DealershipGUI() {
+        this(new DealershipSystem("test_customers.txt", "test_inventory.txt", "test_transactions.txt"));
+    }
 
-        dealership = new DealershipSystem();
+    /**
+     * Construct GUI with an existing DealershipSystem instance.
+     */
+    public DealershipGUI(DealershipSystem dealership) {
+        this.dealership = dealership;
+        initUI();
+    }
 
+    /** Initialize UI components and wiring. Shared by both constructors. */
+    private void initUI() {
         setTitle("ICS4U Vehicle Dealership");
         setSize(1000,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

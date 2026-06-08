@@ -25,12 +25,13 @@ public class BuyerAccount extends Account {
      * @param expectation the Spec object containing the buyer's vehicle specifications
      * @param percentMatch the percentage match required for a vehicle to be considered applicable
      */
-    public BuyerAccount(boolean isOrgaization, boolean isFamily, int budget, String typeCar, Spec expectation, double percentMatch) {
+    public BuyerAccount(boolean isOrgaization, boolean isFamily, int budget, String typeCar, Spec expectation, double percentMatch, double rangeOfAccept) {
         super(isOrgaization, isFamily);
         this.budget = budget;
         this.typeCar = typeCar;
         this.expectation = expectation;
         this.percentMatch = percentMatch;
+        this.rangeOfAccept = rangeOfAccept;
     }
 
     /**
