@@ -1,5 +1,5 @@
 /*
-Do not compile, bugs ahead need full dealership implementation
+Try Compile this
 */
 
 import javax.swing.*;
