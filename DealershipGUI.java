@@ -357,17 +357,21 @@ public class DealershipGUI extends JFrame {
 
                         case "Create Account":
 
-                                String customerName = JOptionPane.showInputDialog("Name");
                                 String customerID = JOptionPane.showInputDialog("ID");
                                 String accountType = JOptionPane.showInputDialog("Seller / Buyer / TradeIn");
 
-                                if (customerName == null || customerID == null || accountType == null) {
+                                if (customerID == null || accountType == null) {
                                         txtOutput.setText("Account creation cancelled.");
                                         break;
                                 }
 
                                 String t = accountType.trim().toLowerCase();
                                 Account acc = null;
+                                Customer cust = dealership.searchCustomerByID(customerID);
+                                if(cust == null) {
+                                        JOptionPane.showMessageDialog(this, "Customer does not exist!", "Error!", JOptionPane.ERROR_MESSAGE);
+                                        break;
+                                }
                                 try {
                                         if (t.equals("seller")) {
                                                 boolean org = JOptionPane.showInputDialog(this, "Organization? (Y/N)").equalsIgnoreCase("Y");
@@ -457,7 +461,7 @@ public class DealershipGUI extends JFrame {
                                                 break;
                                         }
 
-                                        boolean ok = dealership.createAccountForCustomer(customerName, customerID, accountType, acc);
+                                        boolean ok = dealership.createAccountForCustomer(cust.getName(), customerID, accountType, acc);
                                         txtOutput.setText(ok ? "Account created." : "Account creation failed.");
                                 } catch (NumberFormatException ex) {
                                         txtOutput.setText("Input error: " + ex.getMessage());
@@ -549,7 +553,7 @@ public class DealershipGUI extends JFrame {
                                 "Customer ID");
 
                 Transaction[] t =
-                        dealership.searchTransactionByID(id);
+                        dealership.searchCustomerByID(id).getCustomerTransactionHistory();
 
                 
                         displayTransactions(t);

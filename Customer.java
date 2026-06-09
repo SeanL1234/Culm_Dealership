@@ -53,6 +53,7 @@ public class Customer{
         this.name = name;
         id = generateUID();
         customerAccount = new Account[3];
+        customerTransactionHistory = new Transaction[0];
     }
     
      /**
