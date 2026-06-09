@@ -155,10 +155,10 @@ public class HybridVehicle extends Vehicle{
     */
    public String toString(){
       return super.toString()+
-         "\nIs Rechargeable: "+isRechargeable+
+         "Is Rechargeable: "+isRechargeable+
          "\nHas Modes: "+hasModes+
          "\nhas PlugIn: "+hasPlugIn+
-         "\nCharger Type: "+chargerType;
+         "\nCharger Type: "+chargerType + "\n";
    }
 
    @Override

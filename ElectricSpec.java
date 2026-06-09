@@ -113,7 +113,6 @@ public class ElectricSpec extends Spec {
     @Override
     public boolean equals(Object spec, double percentMatch) {
         if (spec == null || !(spec instanceof GasSpec)) {
-            System.out.println("Not a GasSpec");
             return false;
         } else if (spec == this) {
             return true;
@@ -148,11 +147,7 @@ public class ElectricSpec extends Spec {
             totalCount++;
 
             double matchPercentage = (double) matchCount / totalCount * 100;
-            boolean result = matchPercentage >= percentMatch;
-            if (!result) {
-                System.out.println("Not matching enough. Match percentage: " + matchPercentage);
-            } 
-            return result;
+            return matchPercentage >= percentMatch;
         }
     }
 
@@ -163,10 +158,9 @@ public class ElectricSpec extends Spec {
      */
     public String toString() {
         String temp = "";
-        temp += "Electric Spec:\n";
-        // temp += "Engine Type: " + engineType + "\n";
-        // temp += "Fuel Capacity: " + fuelCapacity + "\n";
-        // temp += "Fuel Efficiency: " + fuelEfficiency + "\n";
+        temp += "\nElectric Spec:\n";
+        temp += "Battery Health Percentage: " + batteryHealthPercentage + "\n";
+        temp += "Charging Time: " + chargingTime + "\n";
         return super.toString() + temp;
     }
 }

@@ -11,11 +11,10 @@ public class DealershipRunner {
             transactionsFile = arg[2];
         }
 
-        System.out.println("Loading files:\n customers=" + customersFile + "\n inventory=" + inventoryFile + "\n transactions=" + transactionsFile + "\n");
+    // Create the system (GUI will create its own by default). We avoid printing to terminal.
+    DealershipSystem ds = new DealershipSystem(customersFile, inventoryFile, transactionsFile);
 
-        DealershipSystem ds = new DealershipSystem(customersFile, inventoryFile, transactionsFile);
-
-        // Launch GUI with the loaded dealership system
-        javax.swing.SwingUtilities.invokeLater(() -> new DealershipGUI(ds));
+    // Launch GUI on the Event Dispatch Thread
+    javax.swing.SwingUtilities.invokeLater(() -> new DealershipGUI());
     }
 }

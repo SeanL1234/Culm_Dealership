@@ -48,6 +48,7 @@ public class Customer{
     public Customer(String name) {
         this.name = name;
         id = generateUID();
+        customerAccount = new Account[3];
     }
 
     // /**
@@ -217,13 +218,22 @@ public class Customer{
         this.customerTransactionHistory = customerTransactionHistory;
     }
 
+    public void updateTransactionHistory(Transaction transaction) {
+        Transaction[] temp = customerTransactionHistory;
+        customerTransactionHistory = new Transaction[temp.length+1];
+        for(int i = 0; i < temp.length; i++) {
+            customerTransactionHistory[i] = temp[i];
+        }
+        customerTransactionHistory[customerTransactionHistory.length-1] = transaction;
+    }
+
     /**
      * Generate a short UID prefix from the customer's name.
      * @return partial UID string
      */
     private String generateUID(){
         String[] nameArray = name.split(" ");
-        String uid = nameArray[0].charAt(0) + nameArray[1].charAt(0) + "";
+        String uid = "" + nameArray[0].charAt(0) + nameArray[1].charAt(0);
         return generateUID(uid, 0);
     }
 

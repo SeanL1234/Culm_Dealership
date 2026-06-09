@@ -194,7 +194,7 @@ public class GasSpec extends Spec {
      */
     public String toString() {
         String temp = "";
-        temp += "Gas Spec:\n";
+        temp += "\nGas Spec:\n";
         temp += "Engine Type: " + engineType + "\n";
         temp += "Fuel Capacity: " + fuelCapacity + "\n";
         temp += "Fuel Efficiency: " + fuelEfficiency + "\n";

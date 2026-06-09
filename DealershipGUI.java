@@ -15,13 +15,14 @@ public class DealershipGUI extends JFrame {
     private JButton btnTransactions;
     private JButton btnReports;
     private JButton btnFiles;
+    private JButton btnDeals;
 
     public DealershipGUI() {
 
         dealership = new DealershipSystem(
-                "customers.txt",
-                "inventory.txt",
-                "transactions.txt");
+                "test_customers.txt",
+                "test_inventory.txt",
+                "test_transactions.txt");
 
         setTitle("Vehicle Dealership Management System");
         setSize(1100, 750);
@@ -42,6 +43,15 @@ public class DealershipGUI extends JFrame {
         add(new JScrollPane(txtOutput),
                 BorderLayout.CENTER);
 
+                // Show any messages produced during system initialization
+                if (dealership != null) {
+                        String msgs = dealership.getMessages();
+                        if (msgs != null && !msgs.isEmpty()) {
+                                txtOutput.setText(msgs);
+                                dealership.clearMessages();
+                        }
+                }
+
         JPanel menuPanel =
                 new JPanel(new GridLayout(1,5));
 
@@ -50,12 +60,14 @@ public class DealershipGUI extends JFrame {
         btnTransactions = new JButton("Transactions");
         btnReports = new JButton("Reports");
         btnFiles = new JButton("Files");
+        btnDeals = new JButton("Deals");
 
         menuPanel.add(btnInventory);
         menuPanel.add(btnCustomers);
         menuPanel.add(btnTransactions);
         menuPanel.add(btnReports);
         menuPanel.add(btnFiles);
+        menuPanel.add(btnDeals);
 
         add(menuPanel, BorderLayout.SOUTH);
 
@@ -64,6 +76,7 @@ public class DealershipGUI extends JFrame {
         btnTransactions.addActionListener(e -> openTransactionMenu());
         btnReports.addActionListener(e -> openReportMenu());
         btnFiles.addActionListener(e -> openFileMenu());
+        btnDeals.addActionListener(e -> openDealsMenu());
 
         setVisible(true);
     }
@@ -98,8 +111,11 @@ public class DealershipGUI extends JFrame {
         switch(choice) {
 
             case "Display Inventory":
-
-                dealership.displayInventory();
+            txtOutput.setText(
+                dealership.displayInventory()
+            );
+                
+            
                 break;
 
             case "Search VIN":
@@ -111,10 +127,13 @@ public class DealershipGUI extends JFrame {
                 Vehicle v =
                         dealership.searchVehicleByVIN(vin);
 
-                txtOutput.setText(
-                        v == null ?
-                                "Vehicle not found." :
-                                v.toString());
+                                if (v == null) {
+                                        JOptionPane.showMessageDialog(this, "Vehicle not found.", "Search VIN", JOptionPane.WARNING_MESSAGE);
+                                        txtOutput.setText("Vehicle not found.");
+                                } else {
+                                        JOptionPane.showMessageDialog(this, v.toString(), "Search VIN - Vehicle", JOptionPane.INFORMATION_MESSAGE);
+                                        txtOutput.setText(v.toString());
+                                }
 
                 break;
 
@@ -126,6 +145,46 @@ public class DealershipGUI extends JFrame {
                         "Inventory sorted by year.");
 
                 break;
+        
+                        case "Search Spec":
+                                String[] specTypes = {"Gas","Electric","Hybrid"};
+                                String chosen = (String) JOptionPane.showInputDialog(this, "Choose spec type", "Spec Type", JOptionPane.PLAIN_MESSAGE, null, specTypes, specTypes[0]);
+                                if (chosen == null) break;
+                                try {
+                                        int mileage = Integer.parseInt(JOptionPane.showInputDialog(this, "Mileage (int):"));
+                                        int age = Integer.parseInt(JOptionPane.showInputDialog(this, "Age (int):"));
+                                        int warranty = Integer.parseInt(JOptionPane.showInputDialog(this, "Warranty Expire Year (int):"));
+                                        String lastMaintenance = JOptionPane.showInputDialog(this, "Last Maintenance (String):");
+                                        int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog(this, "Base Maintenance Fee (int):"));
+                                        Spec expectation = null;
+                                        if (chosen.equals("Gas")) {
+                                                String engineType = JOptionPane.showInputDialog(this, "Engine Type (String):");
+                                                int fuelCap = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Capacity (int):"));
+                                                int fuelEff = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Efficiency (int):"));
+                                                expectation = new GasSpec(mileage, age, warranty, lastMaintenance, baseMaintenanceFee, engineType, fuelCap, fuelEff);
+                                        } else if (chosen.equals("Electric")) {
+                                                double batteryHealthPerc = Double.parseDouble(JOptionPane.showInputDialog(this, "Battery Health Percentage (0-100):"));
+                                                int chargingTime = Integer.parseInt(JOptionPane.showInputDialog(this, "Charging Time (int):"));
+                                                expectation = new ElectricSpec(mileage, age, warranty, lastMaintenance, baseMaintenanceFee, batteryHealthPerc/100.0, chargingTime);
+                                        } else { // Hybrid
+                                                int powerReturn = Integer.parseInt(JOptionPane.showInputDialog(this, "Power Return Rate (int):"));
+                                                int chargingTime = Integer.parseInt(JOptionPane.showInputDialog(this, "Charging Time (int):"));
+                                                int fuelEff = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Efficiency (int):"));
+                                                expectation = new HybridSpec(mileage, age, warranty, lastMaintenance, baseMaintenanceFee, powerReturn, chargingTime, fuelEff);
+                                        }
+                                        double percentMatch = Double.parseDouble(JOptionPane.showInputDialog(this, "Percent Match (0-100):"));
+                                        Vehicle[] matches = dealership.searchVehicleBySpec(expectation, percentMatch);
+                                        if (matches == null || matches.length == 0) {
+                                                txtOutput.setText("No matching vehicles found.");
+                                        } else {
+                                                String out = "";
+                                                for (Vehicle mv : matches) out += mv.toString() + "\n\n";
+                                                txtOutput.setText(out);
+                                        }
+                                } catch (NumberFormatException ex) {
+                                        txtOutput.setText("Input error: " + ex.getMessage());
+                                }
+                                break;
 
             case "Sort By Manufacturer":
 
@@ -145,10 +204,11 @@ public class DealershipGUI extends JFrame {
                 boolean removed =
                         dealership.removeVehicle(removeVIN);
 
-                txtOutput.setText(
-                        removed ?
-                                "Vehicle removed." :
-                                "Vehicle not found.");
+                        if (removed) {
+                                JOptionPane.showMessageDialog(this, "Vehicle removed.", "Remove Vehicle", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                                JOptionPane.showMessageDialog(this, "Vehicle not found.", "Remove Vehicle", JOptionPane.WARNING_MESSAGE);
+                        }
 
                 break;
         }
@@ -164,6 +224,7 @@ public class DealershipGUI extends JFrame {
                 "Display All Customers",
                 "Display Loyal Customers",
                 "Search Customer ID",
+                "Display Accounts",
                 "Search Last Name",
                 "Add Customer",
                 "Create Account",
@@ -187,15 +248,15 @@ public class DealershipGUI extends JFrame {
         switch(choice) {
 
             case "Display All Customers":
-
-                dealership.displayAllCustomerInfo();
-
+                txtOutput.setText(
+                    dealership.displayAllCustomerInfo()
+                );
                 break;
 
             case "Display Loyal Customers":
-
-                dealership.displayAllLoyalCustomerInfo();
-
+                txtOutput.setText(
+                    dealership.displayAllLoyalCustomerInfo()
+                );
                 break;
 
             case "Search Customer ID":
@@ -213,6 +274,47 @@ public class DealershipGUI extends JFrame {
                                 c.toString());
 
                 break;
+
+                        case "Display Accounts":
+
+                                String acctId = JOptionPane.showInputDialog("Customer ID:");
+                                if (acctId == null) {
+                                        txtOutput.setText("Display accounts cancelled.");
+                                        break;
+                                }
+                                                Customer foundCust = dealership.searchCustomerByID(acctId);
+                                                if (foundCust == null) {
+                                                        txtOutput.setText("Customer not found.");
+                                                        break;
+                                                }
+                                                StringBuilder accOut = new StringBuilder();
+                                                accOut.append(foundCust.getEssentialInfo()).append("\n");
+                                                Account[] accts = foundCust.getCustomerAccount();
+                                // Seller
+                                accOut.append("Seller Account:\n");
+                                if (accts == null || accts.length < 1 || accts[0] == null) {
+                                        accOut.append("null\n\n");
+                                } else {
+                                        accOut.append(accts[0].toString()).append("\n\n");
+                                }
+                                // Buyer
+                                accOut.append("Buyer Account:\n");
+                                if (accts == null || accts.length < 2 || accts[1] == null) {
+                                        accOut.append("null\n\n");
+                                } else {
+                                        accOut.append(accts[1].toString()).append("\n\n");
+                                }
+                                // Trade-in
+                                accOut.append("Trade-In Account:\n");
+                                if (accts == null || accts.length < 3 || accts[2] == null) {
+                                        accOut.append("null\n\n");
+                                } else {
+                                        accOut.append(accts[2].toString()).append("\n\n");
+                                }
+
+                                txtOutput.setText(accOut.toString());
+
+                                break;
 
             case "Search Last Name":
 
@@ -247,27 +349,115 @@ public class DealershipGUI extends JFrame {
 
                 break;
 
-            case "Create Account":
+                        case "Create Account":
 
-                String customerName =
-                        JOptionPane.showInputDialog("Name");
+                                String customerName = JOptionPane.showInputDialog("Name");
+                                String customerID = JOptionPane.showInputDialog("ID");
+                                String accountType = JOptionPane.showInputDialog("Seller / Buyer / TradeIn");
 
-                String customerID =
-                        JOptionPane.showInputDialog("ID");
+                                if (customerName == null || customerID == null || accountType == null) {
+                                        txtOutput.setText("Account creation cancelled.");
+                                        break;
+                                }
 
-                String accountType =
-                        JOptionPane.showInputDialog(
-                                "Seller / Buyer / TradeIn");
+                                String t = accountType.trim().toLowerCase();
+                                Account acc = null;
+                                try {
+                                        if (t.equals("seller")) {
+                                                boolean org = JOptionPane.showInputDialog(this, "Organization? (Y/N)").equalsIgnoreCase("Y");
+                                                boolean fam = JOptionPane.showInputDialog(this, "Family? (Y/N)").equalsIgnoreCase("Y");
+                                                int offered = Integer.parseInt(JOptionPane.showInputDialog(this, "Offered price (int):"));
+                                                int rating = Integer.parseInt(JOptionPane.showInputDialog(this, "Rating (int):"));
+                                                String brandName = JOptionPane.showInputDialog(this, "Brand Name");
+                                                String modelName = JOptionPane.showInputDialog(this, "Model Name");
+                                                int year = Integer.parseInt(JOptionPane.showInputDialog(this, "Year Made (int):"));
+                                                int basePrice = Integer.parseInt(JOptionPane.showInputDialog(this, "Base Price (int):"));
+                                                String trim = JOptionPane.showInputDialog(this, "Trim");
+                                                int maxSpeed = Integer.parseInt(JOptionPane.showInputDialog(this, "Max Speed (int):"));
+                                                String type = JOptionPane.showInputDialog(this, "Type Vehicle");
+                                                String wheel = JOptionPane.showInputDialog(this, "Wheel");
+                                                String trans = JOptionPane.showInputDialog(this, "Transmission");
+                                                int safe = Integer.parseInt(JOptionPane.showInputDialog(this, "Safety Rating (int):"));
+                                                int seats = Integer.parseInt(JOptionPane.showInputDialog(this, "Number of Seats (int):"));
+                                                String color = JOptionPane.showInputDialog(this, "Color");
+                                                int tow = Integer.parseInt(JOptionPane.showInputDialog(this, "Tow (int):"));
+                                                String maintenance = JOptionPane.showInputDialog(this, "Maintenance Period:");
+                                                int carRange = Integer.parseInt(JOptionPane.showInputDialog(this, "Range (int):"));
+                                                String vin = JOptionPane.showInputDialog(this, "VIN");
+                                                Vehicle owned = null;
+                                                String typeCar = JOptionPane.showInputDialog(this, "Type of Car? (Gas, Hybrid, Electric): ");
+                                                // if (vin != null && !vin.equalsIgnoreCase("none")) owned = dealership.searchVehicleByVIN(vin);
+                                                if(typeCar.equals("Gas")) {
+                                                        int maxHorsePower = Integer.parseInt(JOptionPane.showInputDialog(this, "Max Horsepower (int):"));
+                                                        int mileage = Integer.parseInt(JOptionPane.showInputDialog(this, "Mileage (int):"));
+                                                        int age = Integer.parseInt(JOptionPane.showInputDialog(this, "Age (int):"));
+                                                        int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog(this, "Warranty Expire Year (int):"));
+                                                        String lastMaintenance = JOptionPane.showInputDialog(this, "Last Maintenance");
+                                                        int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog(this, "Base Maintenance Fee (int):"));
+                                                        String engineType = JOptionPane.showInputDialog(this, "Engine Type");
+                                                        int cap = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Cap (int):"));
+                                                        int eff = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Efficiency (int):"));
+                                                        owned = new GasVehicle(modelName, brandName, type, year, basePrice, safe, vin, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, carRange, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                                                } else if(typeCar.equals("Electric")) {
+                                                        boolean hasAutoPilot = JOptionPane.showInputDialog(this, "Has autopilot? (Y/N)").equalsIgnoreCase("Y");
+                                                        boolean hasModes = JOptionPane.showInputDialog(this, "Has modes? (Y/N)").equalsIgnoreCase("Y");
+                                                        String chargerType = JOptionPane.showInputDialog(this, "Charger Type");
+                                                        int mileage = Integer.parseInt(JOptionPane.showInputDialog(this, "Mileage (int):"));
+                                                        int age = Integer.parseInt(JOptionPane.showInputDialog(this, "Age (int):"));
+                                                        int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog(this, "Warranty Expire Year (int):"));
+                                                        String lastMaintenance = JOptionPane.showInputDialog(this, "Last Maintenance");
+                                                        int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog(this, "Base Maintenance Fee (int):"));
+                                                        double batteryHealthPercentage = Double.parseDouble(JOptionPane.showInputDialog(this, "Battery Health Percentage (0-100):")) / 100.0;
+                                                        int chargingTime = Integer.parseInt(JOptionPane.showInputDialog(this, "Charging Time (int):"));
+                                                        // use previously-entered VIN and carRange variables
+                                                        owned = new ElectricVehicle(modelName, brandName, type, year, basePrice, safe, vin, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, carRange, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                                                } else {
+                                                        boolean isRechargeable = JOptionPane.showInputDialog(this, "Is Rechargeable? (Y/N)").equalsIgnoreCase("Y");
+                                                        boolean hasModes = JOptionPane.showInputDialog(this, "Has modes? (Y/N)").equalsIgnoreCase("Y");
+                                                        boolean hasPlugIn = JOptionPane.showInputDialog(this, "Has Plug-in? (Y/N)").equalsIgnoreCase("Y");
+                                                        String chargerType = JOptionPane.showInputDialog(this, "Charger Type");
+                                                        int mileage = Integer.parseInt(JOptionPane.showInputDialog(this, "Mileage (int):"));
+                                                        int age = Integer.parseInt(JOptionPane.showInputDialog(this, "Age (int):"));
+                                                        int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog(this, "Warranty Expire Year (int):"));
+                                                        String lastMaintenance = JOptionPane.showInputDialog(this, "Last Maintenance");
+                                                        int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog(this, "Base Maintenance Fee (int):"));
+                                                        int powerReturnRate = Integer.parseInt(JOptionPane.showInputDialog(this, "Power Return Rate (int):"));
+                                                        int chargingTime = Integer.parseInt(JOptionPane.showInputDialog(this, "Charging Time (int):"));
+                                                        int fuelEfficiency = Integer.parseInt(JOptionPane.showInputDialog(this, "Fuel Efficiency (int):"));
+                                                        owned = new HybridVehicle(modelName, brandName, type, year, basePrice, safe, vin, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, carRange, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                                                }
+                                                double range = Double.parseDouble(JOptionPane.showInputDialog(this, "Range of accept (double):"));
+                                                acc = new SellerAccount(org, fam, offered, rating, owned, range);
+                                        } else if (t.equals("buyer")) {
+                                                boolean org = JOptionPane.showInputDialog(this, "Organization? (Y/N)").equalsIgnoreCase("Y");
+                                                boolean fam = JOptionPane.showInputDialog(this, "Family? (Y/N)").equalsIgnoreCase("Y");
+                                                int budget = Integer.parseInt(JOptionPane.showInputDialog(this, "Budget (int):"));
+                                                String typeCar = JOptionPane.showInputDialog(this, "Preferred car type (e.g., Gas/Electric/Hybrid):");
+                                                double percentMatch = Double.parseDouble(JOptionPane.showInputDialog(this, "Percent match (double 0-100):"));
+                                                double rangeOfAccept = Double.parseDouble(JOptionPane.showInputDialog(this, "Range of accept (double):"));
+                                                // BuyerAccount constructor: (boolean isOrg, boolean isFamily, int budget, String typeCar, Spec expectation, double percentMatch, double rangeOfAccept)
+                                                acc = new BuyerAccount(org, fam, budget, typeCar, null, percentMatch, rangeOfAccept);
+                                        } else if (t.equals("tradein") || t.equals("trade-in") || t.equals("trade")) {
+                                                boolean org = JOptionPane.showInputDialog(this, "Organization? (Y/N)").equalsIgnoreCase("Y");
+                                                boolean fam = JOptionPane.showInputDialog(this, "Family? (Y/N)").equalsIgnoreCase("Y");
+                                                int rating = Integer.parseInt(JOptionPane.showInputDialog(this, "Rating (int):"));
+                                                String vin = JOptionPane.showInputDialog(this, "If vehicle for trading exists in inventory, enter VIN, otherwise enter 'none':");
+                                                Vehicle tradeVeh = null;
+                                                if (vin != null && !vin.equalsIgnoreCase("none")) tradeVeh = dealership.searchVehicleByVIN(vin);
+                                                double range = Double.parseDouble(JOptionPane.showInputDialog(this, "Range of accept (double):"));
+                                                acc = new TradeInAccount(org, fam, null, rating, tradeVeh, 1.0, range);
+                                        } else {
+                                                txtOutput.setText("Unknown account type: " + accountType);
+                                                break;
+                                        }
 
-                dealership.createAccountForCustomer(
-                        customerName,
-                        customerID,
-                        accountType);
+                                        boolean ok = dealership.createAccountForCustomer(customerName, customerID, accountType, acc);
+                                        txtOutput.setText(ok ? "Account created." : "Account creation failed.");
+                                } catch (NumberFormatException ex) {
+                                        txtOutput.setText("Input error: " + ex.getMessage());
+                                }
 
-                txtOutput.setText(
-                        "Account creation attempted.");
-
-                break;
+                                break;
 
             case "Update Loyalty":
 
@@ -341,9 +531,9 @@ public class DealershipGUI extends JFrame {
         switch(choice) {
 
             case "Display Transactions":
-
-                dealership.displayTransactionHistory();
-
+                txtOutput.setText(
+                    dealership.displayTransactionHistory()
+                );
                 break;
 
             case "Search By Customer ID":
@@ -355,7 +545,8 @@ public class DealershipGUI extends JFrame {
                 Transaction[] t =
                         dealership.searchTransactionByID(id);
 
-                displayTransactions(t);
+                
+                        displayTransactions(t);
 
                 break;
 
@@ -514,9 +705,9 @@ public class DealershipGUI extends JFrame {
 
                 dealership.loadInventory(
                         "inventory.txt");
-
-                txtOutput.setText(
-                        "Inventory loaded.");
+                // Append any messages the system recorded
+                txtOutput.setText(dealership.getMessages());
+                dealership.clearMessages();
 
                 break;
 
@@ -524,9 +715,8 @@ public class DealershipGUI extends JFrame {
 
                 dealership.saveInventory(
                         "inventory.txt");
-
-                txtOutput.setText(
-                        "Inventory saved.");
+                txtOutput.setText(dealership.getMessages());
+                dealership.clearMessages();
 
                 break;
 
@@ -534,9 +724,8 @@ public class DealershipGUI extends JFrame {
 
                 dealership.loadTransactionHistory(
                         "transactions.txt");
-
-                txtOutput.setText(
-                        "Transactions loaded.");
+                txtOutput.setText(dealership.getMessages());
+                dealership.clearMessages();
 
                 break;
 
@@ -544,11 +733,89 @@ public class DealershipGUI extends JFrame {
 
                 dealership.saveTransactionHistory(
                         "transactions.txt");
-
-                txtOutput.setText(
-                        "Transactions saved.");
+                txtOutput.setText(dealership.getMessages());
+                dealership.clearMessages();
 
                 break;
+        }
+    }
+
+    private void openDealsMenu() {
+
+        String[] options = {
+                "Sell Vehicle",
+                "Buy Vehicle",
+                "Trade Vehicle"
+        };
+
+        String choice = (String) JOptionPane.showInputDialog(
+                this,
+                "Deal Operations",
+                "Deals",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if(choice == null)
+            return;
+
+        switch(choice) {
+
+                case "Sell Vehicle":
+                        String sellID = JOptionPane.showInputDialog("ID");    
+                        Customer sellCus = dealership.searchCustomerByID(sellID);
+                        if(sellCus == null) {
+                                JOptionPane.showMessageDialog(this, "Customer not found! Ensure you entered the correct id, or go add a new customer!", "Error!", JOptionPane.WARNING_MESSAGE);
+                        } else {
+                                SellerAccount sellAcc = (SellerAccount)sellCus.getSellerAccount();
+                                if(sellAcc == null) {
+                                        JOptionPane.showMessageDialog(this, "You do not have an account! Go create one!", "Error!", JOptionPane.WARNING_MESSAGE);
+                                } else {
+                                        if(dealership.validateAccount("Seller", sellID)) {
+                                                if(dealership.withinDealerRange(sellAcc.getOwnedVehicle(), sellAcc)) {
+                                                     int dealPrice = dealership.createDealPrice("seller", sellAcc, null);
+                                                        if(sellAcc.sellVehicle(dealPrice)) {
+                                                                JOptionPane.showMessageDialog(this, "Transaction complete!\nVehicle sold for: $" + dealPrice, "Success!", JOptionPane.INFORMATION_MESSAGE);
+                                                        }
+                                                        Transaction transaction = new Transaction(sellCus.getName(), sellID, dealPrice, false, false, true, false, 0, 0, 0, sellAcc.getOwnedVehicle());
+                                                        dealership.updateTransactionHistory(transaction);
+                                                        sellCus.updateTransactionHistory(transaction);   
+                                                } else {
+                                                        JOptionPane.showMessageDialog(this, "Deal rejected! You're offer price is too high compared to the base price!", "Rejected", JOptionPane.INFORMATION_MESSAGE);
+                                                }
+                                        } else {
+                                                JOptionPane.showMessageDialog(this, "Your seller account is invalid! Check your rating, or make sure your vehicle information is correct!", "Invalid!", JOptionPane.WARNING_MESSAGE);
+                                        }
+                                }
+                        }
+                        break;
+
+                // case "Buy Vehicle":
+                //         String buyID = JOptionPane.showInputDialog("ID");    
+                //         Customer buyCus = dealership.searchCustomerByID(buyID);
+                //         if(buyCus == null) {
+                //                 JOptionPane.showMessageDialog(this, "Customer not found! Ensure you entered the correct id, or go add a new customer!", "Error!", JOptionPane.WARNING_MESSAGE);
+                //         } else {
+                //                 BuyerAccount acc = (BuyerAccount)buyCus.getBuyerAccount();
+                //                 if(acc == null) {
+                //                         JOptionPane.showMessageDialog(this, "You do not have an account! Go create one!", "Error!", JOptionPane.WARNING_MESSAGE);
+                //                 } else {
+                //                         if(dealership.validateAccount("Buyer", buyID)) {
+                                                
+                //                                 int dealPrice = dealership.createDealPrice("buyer", acc, null);
+                //                                 if(acc.buyVehicle(dealPrice)) {
+                //                                         JOptionPane.showMessageDialog(this, "Transaction complete!\nVehicle bought for: $" + dealPrice, "Success!", JOptionPane.INFORMATION_MESSAGE);
+                //                                 }
+                //                                 Transaction transaction = new Transaction(buyCus.getName(), buyID, dealPrice, false, true, false, false, 0, 0, 0, acc.getOwnedVehicle());
+                //                                 dealership.updateTransactionHistory(transaction);
+                //                                 buyCus.updateTransactionHistory(transaction);
+                //                         } else {
+                //                                 JOptionPane.showMessageDialog(this, "Your seller account is invalid! Check your rating, or make sure your vehicle information is correct!", "Invalid!", JOptionPane.WARNING_MESSAGE);
+                //                         }
+                //                 }
+                //         }
+                //         break;
         }
     }
 

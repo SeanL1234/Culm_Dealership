@@ -135,9 +135,9 @@ public class ElectricVehicle extends Vehicle{
     */
    public String toString(){
       return super.toString()+
-         "\nHas Autopilot: "+hasAutoPilot+
+         "Has Autopilot: "+hasAutoPilot+
          "\nHas Modes: "+hasModes+
-         "\nCharger Type: "+chargerType;
+         "\nCharger Type: "+chargerType + "\n";
    }
 
    @Override

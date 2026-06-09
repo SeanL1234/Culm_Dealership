@@ -578,7 +578,7 @@ abstract class Vehicle {
          "\nColor:"+color+
          "\nMaintenance Period: "+ maintenancePeriod+
          "\nRange: "+range+
-         "\nVehicle Spec: "+vehicleSpec;
+         "\n\nVehicle Spec: \n"+vehicleSpec;
    
    }
    

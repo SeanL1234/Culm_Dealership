@@ -210,6 +210,7 @@ public class HybridSpec extends Spec {
     @Override
     public String toString() {
         String temp = "";
+        temp += "\nHybrid Spec:\n";
         temp += "Power Return Rate: " + powerReturnRate + "\n";
         temp += "Charging Time: " + chargingTime + "\n";
         temp += "Fuel Efficiency: " + fuelEfficiency + "\n";

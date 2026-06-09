@@ -1,12 +1,38 @@
 import java.io.*;
 
 public class DealershipSystem {
+    private final int DEAL_RANGE = 1000;
     private Customer[] customers;
     private Vehicle[] vehicles;
     private Transaction[] transactionHistory;
     private int numCustomer;
     private int numCars;
     private int numTransactions;
+    // A simple message buffer that GUI can read and display.
+    private String messages = "";
+
+    /**
+     * Append a message to the internal message buffer. GUI can read this via getMessages().
+     */
+    public void appendMessage(String msg) {
+        if (msg == null) return;
+        if (messages == null) messages = "";
+        messages += msg + System.lineSeparator();
+    }
+
+    /**
+     * Return the current buffered messages. Does not clear them.
+     */
+    public String getMessages() {
+        return messages == null ? "" : messages;
+    }
+
+    /**
+     * Clear buffered messages.
+     */
+    public void clearMessages() {
+        messages = "";
+    }
 
     public DealershipSystem(String customerFileName, String inventoryFileName, String transactionFileName) {
         try {
@@ -443,25 +469,41 @@ public class DealershipSystem {
         
             read.close();
         } catch(IOException ex) {
-            System.out.println("I/O ERROR!");
+            appendMessage("I/O ERROR while loading files: " + ex.getMessage());
+            // store stack trace into messages for GUI debugging
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
         }
     }
 
-    public boolean acceptDeal(Customer customer, Account acc) {
-        if(acc == null) {
-            return false;
-        } else if(!acc.validate(vehicles)) {
-            return false;
+    public boolean withinDealerRange(Vehicle vehicle, Account acc) {
+        if(acc instanceof SellerAccount) {
+            return ((SellerAccount)acc).getOfferedPrice() <= vehicle.getBasePrice() + DEAL_RANGE;
         } else {
-            int suggestedPrice = customer.getRandomizedDealPrice();
-            if(acc instanceof SellerAccount) {
-                return ((SellerAccount)acc).sellVehicle(suggestedPrice);
-            } else if(acc instanceof BuyerAccount) {
-                return ((BuyerAccount)acc).buyVehicle(suggestedPrice);
-            }
             return false;
         }
     }
+
+    // public Transaction acceptDeal(Customer customer, Account acc) {
+    //     if(acc == null) {
+    //         return null;
+    //     } else if(!acc.validate(vehicles)) {
+    //         return null;
+    //     } else {
+    //         int suggestedPrice = customer.getRandomizedDealPrice();
+    //         if(acc instanceof SellerAccount) {
+    //             if(((SellerAccount)acc).sellVehicle(suggestedPrice)) {
+    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, false, true, false, 0, 0, 0, ((SellerAccount)acc).getOwnedVehicle());
+    //             }
+    //         } else if(acc instanceof BuyerAccount) {
+    //             if(((BuyerAccount)acc).buyVehicle(suggestedPrice)) {
+    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, true, false, false, 0, 0, 0, ((BuyerAccount)acc).());
+    //             }
+    //         }
+    //         return null;
+    //     }
+    // }
 
     /**
      * Attempt to accept a deal between the given customer and account using internal validation.
@@ -500,21 +542,21 @@ public class DealershipSystem {
         return null;
     }
 
-    /**
-     * Search the inventory for a vehicle whose spec exactly equals the provided expectation
-     * (100% match).
-     * @param expectation the Spec to search for
-     * @return the first matching Vehicle or null if none found
-     */
+    // /**
+    //  * Search the inventory for a vehicle whose spec exactly equals the provided expectation
+    //  * (100% match).
+    //  * @param expectation the Spec to search for
+    //  * @return the first matching Vehicle or null if none found
+    //  */
 
-    public Vehicle searchVehicleBySpec(Spec expectation) {
-        for (int i = 0; i < vehicles.length; i++) {
-            if (vehicles[i].getVehicleSpec().equals(expectation, 100.0)) {
-                return vehicles[i];
-            }
-        }
-        return null;
-    }
+    // public Vehicle searchVehicleBySpec(Spec expectation) {
+    //     for (int i = 0; i < vehicles.length; i++) {
+    //         if (vehicles[i].getVehicleSpec().equals(expectation, 100.0)) {
+    //             return vehicles[i];
+    //         }
+    //     }
+    //     return null;
+    // }
 
     /**
      * Search the inventory for a vehicle whose spec matches the provided expectation
@@ -524,13 +566,32 @@ public class DealershipSystem {
      * @return the first matching Vehicle or null if none found
      */
 
-    public Vehicle searchVehicleBySpec(Spec expectation, double percentMatch) {
-        for (int i = 0; i < vehicles.length; i++) {
+    public Vehicle[] searchVehicleBySpec(Spec expectation, double percentMatch) {
+        Vehicle[] matching = new Vehicle[numVehicleMatch(expectation, percentMatch)];
+        int idx = 0;
+        for (int i = 0; i < vehicles.length && matching.length != 0; i++) {
             if (vehicles[i].getVehicleSpec().equals(expectation, percentMatch)) {
-                return vehicles[i];
+                matching[idx] = vehicles[i];
+                idx++;
             }
         }
-        return null;
+        return matching;
+    }
+
+    /**
+     * Return all vehicles that match the provided Spec by at least percentMatch.
+     * @param expectation spec to match
+     * @param percentMatch threshold 0-100
+     * @return array of matching vehicles (may be empty)
+     */
+    public int numVehicleMatch(Spec expectation, double percentMatch) {
+        int count = 0;
+        for (int i = 0; i < vehicles.length; i++) {
+            if (vehicles[i].getVehicleSpec().equals(expectation, percentMatch)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -638,6 +699,33 @@ public class DealershipSystem {
             }
         }
         return result;
+    }
+
+    /**
+     * Create a suggested deal price for a buyer or seller.
+     * If type equals "buyer", uses the provided vehicle's base price.
+     * If type equals "seller", uses the seller account's owned vehicle base price.
+     * Price is basePrice multiplied by a random factor in [1.0, 1.5].
+     * Returns -1 on invalid input.
+     * @param type either "buyer" or "seller"
+     * @param acc the Account performing the deal (may be SellerAccount/BuyerAccount/TradeInAccount)
+     * @param vehicle the vehicle involved (required for buyer, may be null for seller)
+     * @return calculated price as double or -1 on error
+     */
+    public int createDealPrice(String type, Account acc, Vehicle vehicle) {
+        String t = type.toLowerCase();
+        int base = -1;
+        if (t.equals("buyer")) {
+            base = vehicle.getBasePrice();
+        } else if (t.equals("seller")) {
+            base = ((SellerAccount)acc).getOfferedPrice();
+        } else {
+            return -1;
+        }
+
+        // multiplier between 1.0 and 1.5
+        double mult = 1.0 + Math.random() * 0.5;
+        return (int)(base * mult);
     }
 
     /**
@@ -870,6 +958,16 @@ public class DealershipSystem {
         return result;
     }
 
+    public boolean validateAccount(String type, String id) {
+        if(type.equals("Seller")) {
+            return searchCustomerByID(id).getSellerAccount().validate(vehicles);
+        } else if(type.equals("Buyer")) {
+            return searchCustomerByID(id).getBuyerAccount().validate(vehicles);
+        } else {
+            return searchCustomerByID(id).getTradeInAccount().validate(vehicles);
+        }
+    }
+
     /**
      * Return transactions that occurred on the specified date.
      * @param month month number
@@ -994,7 +1092,10 @@ public class DealershipSystem {
             }
             read.close();
         } catch (IOException ex) {
-            System.out.println("I/O ERROR!");
+            appendMessage("I/O ERROR while loading inventory: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
         }
     }
 
@@ -1070,7 +1171,10 @@ public class DealershipSystem {
             }
             bw.close();
         } catch (IOException ex) {
-            System.out.println("I/O ERROR!");
+            appendMessage("I/O ERROR while saving inventory: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
         }
     }
 
@@ -1154,7 +1258,10 @@ public class DealershipSystem {
             }
             read.close();
         } catch (IOException ex) {
-            System.out.println("I/O ERROR!");
+            appendMessage("I/O ERROR while loading transaction history: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
         }
     }
 
@@ -1241,7 +1348,10 @@ public class DealershipSystem {
             }
             bw.close();
         } catch (IOException ex) {
-            System.out.println("I/O ERROR!");
+            appendMessage("I/O ERROR while saving transaction history: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
         }
     }
 
@@ -1348,22 +1458,24 @@ public class DealershipSystem {
     /**
      * Display all customers' toString() to stdout.
      */
-    public void displayAllCustomerInfo() {
-        if (customers == null) return;
+    public String displayAllCustomerInfo() {
+        String string = "";
         for (int i = 0; i < numCustomer; i++) {
-            if (customers[i] != null) System.out.println(customers[i].toString());
+            if (customers[i] != null) string += customers[i].toString() + "\n";
         }
+        return string;
     }
 
     /**
      * Display all loyal customers' info.
      */
-    public void displayAllLoyalCustomerInfo() {
-        if (customers == null) return;
+    public String displayAllLoyalCustomerInfo() {
+        String string = "";
         for (int i = 0; i < numCustomer; i++) {
             Customer c = customers[i];
-            if (c != null && c.isLoyal()) System.out.println(c.toString());
+            if (c != null && c.isLoyal()) string += c.toString() + "\n";
         }
+        return string;
     }
 
     /**
@@ -1372,7 +1484,7 @@ public class DealershipSystem {
     public String displayInventory() {
         String string = "";
         for (int i = 0; i < numCars; i++) {
-            if (vehicles[i] != null) string += vehicles[i].toString() + "\n";
+            if (vehicles[i] != null) string += vehicles[i].toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
         }
         return string;
     }
@@ -1380,22 +1492,24 @@ public class DealershipSystem {
     /**
      * Display all vehicles from a given manufacturer.
      */
-    public void displayAllManufacturer(String manufacturer) {
-        if (vehicles == null || manufacturer == null) return;
+    public String displayAllManufacturer(String manufacturer) {
+        String string = "";
         for (int i = 0; i < numCars; i++) {
             Vehicle v = vehicles[i];
-            if (v != null && manufacturer.equals(v.getModelBrand())) System.out.println(v.toString());
+            if (v != null && manufacturer.equals(v.getModelBrand())) string += v.toString() + "\n";
         }
+        return string;
     }
 
     /**
      * Display full transaction history.
      */
-    public void displayTransactionHistory() {
-        if (transactionHistory == null) return;
+    public String displayTransactionHistory() {
+        String string = "";
         for (int i = 0; i < numTransactions; i++) {
-            if (transactionHistory[i] != null) System.out.println(transactionHistory[i].toString());
+            if (transactionHistory[i] != null) string += transactionHistory[i].toString() + "\n";
         }
+        return string;
     }
 
     /**
@@ -1404,8 +1518,8 @@ public class DealershipSystem {
      * accountType should be one of: "Seller", "Buyer", "TradeIn" (case-insensitive).
      * @return true if account created and attached, false if customer not found or input error
      */
-    public boolean createAccountForCustomer(String name, String id, String accountType) {
-        if (name == null || id == null || accountType == null) return false;
+    public boolean createAccountForCustomer(String name, String id, String accountType, Account account) {
+        if (name == null || id == null || accountType == null || account == null) return false;
         Customer target = null;
         for (int i = 0; i < numCustomer; i++) {
             Customer c = customers[i];
@@ -1416,69 +1530,13 @@ public class DealershipSystem {
         }
         if (target == null) return false;
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            String t = accountType.trim().toLowerCase();
-            if (t.equals("seller")) {
-                System.out.print("Is this account for an organization? (Y/N): ");
-                boolean org = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Is this account for a family? (Y/N): ");
-                boolean fam = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Offered price (int): ");
-                int offered = Integer.parseInt(in.readLine().trim());
-                System.out.print("Rating (int): ");
-                int rating = Integer.parseInt(in.readLine().trim());
-                // For owned vehicle, we will ask user to input VIN of an existing inventory vehicle or 'none'
-                System.out.print("If seller has a vehicle in inventory, enter VIN, otherwise enter 'none': ");
-                String vin = in.readLine().trim();
-                Vehicle owned = null;
-                if (!vin.equalsIgnoreCase("none")) owned = searchVehicleByVIN(vin);
-                System.out.print("Range of accept (double): ");
-                double range = Double.parseDouble(in.readLine().trim());
-                SellerAccount sa = new SellerAccount(org, fam, offered, rating, owned, range);
-                target.createAccount("Seller", sa);
-                return true;
-            } else if (t.equals("buyer")) {
-                System.out.print("Is this account for an organization? (Y/N): ");
-                boolean org = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Is this account for a family? (Y/N): ");
-                boolean fam = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Budget (int): ");
-                int budget = Integer.parseInt(in.readLine().trim());
-                System.out.print("Preferred car type (e.g., Gas/Electric/Hybrid): ");
-                String typeCar = in.readLine().trim();
-                System.out.print("Range of accept (double): ");
-                double range = Double.parseDouble(in.readLine().trim());
-                // For simple input, we'll not build a complex Spec here; set expectation to null and percentMatch to 1.0
-                BuyerAccount ba = new BuyerAccount(org, fam, budget, typeCar, null, 1.0, range);
-                target.createAccount("Buyer", ba);
-                return true;
-            } else if (t.equals("tradein") || t.equals("trade-in") || t.equals("trade")) {
-                System.out.print("Is this account for an organization? (Y/N): ");
-                boolean org = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Is this account for a family? (Y/N): ");
-                boolean fam = in.readLine().trim().equalsIgnoreCase("Y");
-                System.out.print("Rating (int): ");
-                int rating = Integer.parseInt(in.readLine().trim());
-                System.out.print("If vehicle for trading exists in inventory, enter VIN, otherwise enter 'none': ");
-                String vin = in.readLine().trim();
-                Vehicle tradeVeh = null;
-                if (!vin.equalsIgnoreCase("none")) tradeVeh = searchVehicleByVIN(vin);
-                System.out.print("Range of accept (double): ");
-                double range = Double.parseDouble(in.readLine().trim());
-                // percentMatch default to 1.0
-                TradeInAccount ta = new TradeInAccount(org, fam, null, rating, tradeVeh, 1.0, range);
-                target.createAccount("TradeIn", ta);
-                return true;
-            } else {
-                System.out.println("Unknown account type: " + accountType);
-                return false;
-            }
-        } catch (IOException | NumberFormatException ex) {
-            System.out.println("Input error: " + ex.getMessage());
-            return false;
-        }
+        // Attach the provided account (no prompting here; GUI handles input)
+        target.createAccount(accountType, account);
+        appendMessage("Created account of type " + accountType + " for " + name);
+        return true;
     }
 
-    
+    // public String showAllApplicableForBuyer() {
+
+    // }
 }

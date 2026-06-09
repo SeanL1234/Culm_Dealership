@@ -105,7 +105,7 @@ public class GasVehicle extends Vehicle{
     */
    public String toString(){
       return super.toString()+
-         "\nMax Horse Power: "+maxHorsePower;
+         "Max Horse Power: "+maxHorsePower + "\n";
    }
 
    @Override
