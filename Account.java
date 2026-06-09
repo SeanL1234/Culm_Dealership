@@ -12,7 +12,6 @@
 abstract class Account {
     private boolean isOrganization;
     private boolean isFamily;
-    private final double ORGANIZATION_DISCOUNT = 0.2;
 
     /**
      * Constructor that initializes an Account with organization and family flags.
