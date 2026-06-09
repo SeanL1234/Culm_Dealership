@@ -723,6 +723,9 @@ public class DealershipSystem {
             return -1;
         }
 
+        if(vehicle == null && base >= ((SellerAccount)acc).getOwnedVehicle().getBasePrice()) {
+            return base;
+        }
         // multiplier between 1.0 and 1.5
         double mult = 1.0 + Math.random() * 0.5;
         return (int)(base * mult);
