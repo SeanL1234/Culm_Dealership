@@ -1,3 +1,14 @@
+/**
+ * DealershipSystem.java
+ * Author: Sean Liu
+ * Teacher: Ms. Lam
+ * Date: June 9, 2026
+ * 
+ * Description: The main class for the dealership system, 
+ * responsible for managing customers, vehicles, transactions, and providing core functionalities 
+ * such as loading data from files and handling the business logic of the dealership operations.
+ */
+
 import java.io.*;
 
 public class DealershipSystem {

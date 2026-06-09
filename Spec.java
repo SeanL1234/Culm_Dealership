@@ -1,3 +1,14 @@
+/**
+ * Spec.java
+ * Author: Fabian Hui
+ * Teacher: Ms. Lam
+ * Date: June 9, 2026
+ * 
+ * Description: The base class for vehicle specifications, 
+ * providing a common interface for different types of vehicle specs.
+ */
+
+
 public abstract class Spec {
 
     public static int DEPRECIATE_AGE = 5;

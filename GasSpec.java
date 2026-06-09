@@ -4,7 +4,8 @@
  * Teacher: Ms. Lam
  * Date: June 3, 2026
  * 
- * Description: [TODO: Add description]
+ * Description: The class representing the specifications of a gas vehicle, 
+ * extending the base Spec class.
  */
 
 public class GasSpec extends Spec {

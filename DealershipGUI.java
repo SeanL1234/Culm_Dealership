@@ -1,6 +1,12 @@
-/*
-Try Compile this
-*/
+/**
+ * DealershipSystem.java
+ * Author: Sean Liu
+ * Teacher: Ms. Lam
+ * Date: June 9, 2026
+ * 
+ * Description: The GUI of the dealership system, 
+ * providing an interface for users to interact with the system's functionalities
+ */
 
 import javax.swing.*;
 import java.awt.*;

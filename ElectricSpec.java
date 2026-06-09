@@ -3,8 +3,8 @@
  * Author: Fabian Hui
  * Teacher: Ms. Lam
  * Date: June 3, 2026
- * 
- * Description: [TODO: Add description]
+ * Description: The class representing the specifications of an electric vehicle, 
+ * extending the base Spec class.
  */
 
 public class ElectricSpec extends Spec {
