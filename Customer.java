@@ -4,7 +4,8 @@
  * Teacher: Ms. Lam
  * Date: June 3, 2026
  * 
- * Description: [TODO: Add description]
+ * Description: The class represents a customer in the dealership system, 
+ * including their accounts, transaction history, and loyalty status.
  */
 
 import java.io.*; // idk if i want this to stay 
@@ -51,25 +52,6 @@ public class Customer{
         customerAccount = new Account[3];
         customerTransactionHistory = new Transaction[0];
     }
-
-    // /**
-    //  * Constructs a Customer from a file containing customer data.
-    //  *
-    //  * @param fileName path to the file containing customer information
-    //  */
-    // public Customer(String fileName){
-    //     try {
-    //         BufferedReader in = new BufferedReader(new FileReader(fileName));
-    //         name = in.readLine();
-    //         id = in.readLine();
-    //         loyaltyPoint = Integer.parseInt(in.readLine());
-    //         // accounts and transaction format goes here, too lazy to write
-    //         in.close();
-    //     } catch (IOException iox) {
-    //         System.out.println("An error occurred while reading the file");
-    //     }
-        
-    // }
     
      /**
      * Compares this customer's loyalty points to another customer's loyalty points.
