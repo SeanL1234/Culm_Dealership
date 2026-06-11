@@ -112,7 +112,7 @@ public class BuyerAccount extends Account {
      * @return boolean indicating if the buyer can afford at least one applicable vehicle
      */
     public boolean validate(Vehicle[] vehicles) {
-        return budget >= findLowestInApplicable(vehicles);
+        return budget >= findLowestInApplicable(vehicles) && findLowestInApplicable(vehicles) != -1;
     }
 
     /**
@@ -173,6 +173,7 @@ public class BuyerAccount extends Account {
      */
     public int findLowestInApplicable(Vehicle[] vehicles) {
         Vehicle[] arr = showAllApplicableVehicles(vehicles);
+        if(arr == null) return -1;
         double smallest = arr[0].getBasePrice();
         for(int i = 1; i < arr.length; i++) {
             if(arr[i].getBasePrice() < smallest) {

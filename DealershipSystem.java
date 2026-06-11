@@ -28,7 +28,7 @@ public class DealershipSystem {
     public void appendMessage(String msg) {
         if (msg == null) return;
         if (messages == null) messages = "";
-        messages += msg + System.lineSeparator();
+        messages += msg + "\n";
     }
 
     /**
@@ -45,16 +45,33 @@ public class DealershipSystem {
         messages = "";
     }
 
+    /**
+     * Construct the system and load data files. By default files are loaded (not appended).
+     */
     public DealershipSystem(String customerFileName, String inventoryFileName, String transactionFileName) {
+        // Load into fresh arrays by default
+        loadCustomers(customerFileName, false);
+        loadInventory(inventoryFileName, false);
+        loadTransactions(transactionFileName, false);
+    }
+
+    /**
+     * Load customers from file. If append==true, new customers are appended to existing array.
+     */
+    public void loadCustomers(String customerFileName, boolean append) {
         try {
             BufferedReader read = new BufferedReader(new FileReader(customerFileName));
-            numCustomer = Integer.parseInt(read.readLine());
-            customers = new Customer[numCustomer];
-            for(int i = 0; i < numCustomer; i++) {
+            int fileCount = Integer.parseInt(read.readLine());
+            int startIndex = 0;
+            if (append && customers != null) startIndex = numCustomer;
+            Customer[] newArr = new Customer[startIndex + fileCount];
+            if (append && customers != null) System.arraycopy(customers, 0, newArr, 0, numCustomer);
+            customers = newArr;
+            for (int idx = 0; idx < fileCount; idx++) {
                 String name = read.readLine();
                 String id = read.readLine();
                 int loyal = Integer.parseInt(read.readLine());
-                String seller = read.readLine();
+                read.readLine(); // skip legacy seller marker
                 String stat = read.readLine();
                 SellerAccount sellerAcc = null;
                 if(!stat.equals("null")) {
@@ -121,17 +138,16 @@ public class DealershipSystem {
                     double rangeOfAccept = Double.parseDouble(read.readLine());
                     sellerAcc = new SellerAccount(org, fam, offered, rating, car, rangeOfAccept);
                 }
-                String buyer = read.readLine();
+                read.readLine(); // skip legacy buyer marker
                 stat = read.readLine();
                 BuyerAccount buyerAcc = null;
                 if(!stat.equals("null")) {
-                    boolean isOrganization = stat.equals("Y");;
+                    boolean isOrganization = stat.equals("Y");
                     boolean isFamily = read.readLine().equals("Y");
                     int budget = Integer.parseInt(read.readLine());
                     String typeCar = read.readLine();
                     Spec expectation = null;
-                    String typeSpec = read.readLine();
-                    if(typeSpec.equals("Gas")) {
+                    if(typeCar.equals("Gas")) {
                         int mileage = Integer.parseInt(read.readLine());
                         int age = Integer.parseInt(read.readLine());
                         int warrantyExpireYear = Integer.parseInt(read.readLine());
@@ -141,7 +157,7 @@ public class DealershipSystem {
                         int cap = Integer.parseInt(read.readLine());
                         int eff = Integer.parseInt(read.readLine());
                         expectation = new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff);
-                    } else if(typeSpec.equals("Electric")) {
+                    } else if(typeCar.equals("Electric")) {
                         int mileage = Integer.parseInt(read.readLine());
                         int age = Integer.parseInt(read.readLine());
                         int warrantyExpireYear = Integer.parseInt(read.readLine());
@@ -165,7 +181,7 @@ public class DealershipSystem {
                     double rangeOfAccept = Double.parseDouble(read.readLine());
                     buyerAcc = new BuyerAccount(isOrganization, isFamily, budget, typeCar, expectation, percentMatch, rangeOfAccept);
                 }
-                String trade = read.readLine();
+                read.readLine(); // skip legacy trade marker
                 stat = read.readLine();
                 TradeInAccount tradeAcc = null;
                 if(!stat.equals("null")) {
@@ -295,7 +311,7 @@ public class DealershipSystem {
                     int range = Integer.parseInt(read.readLine());
                     String VIN = read.readLine();
                     String typeCar = read.readLine();
-                    Vehicle car = null;
+                    Vehicle carObt = null;
                     if(typeCar.equals("Gas")) {
                         int maxHorsePower = Integer.parseInt(read.readLine());
                         int mileage = Integer.parseInt(read.readLine());
@@ -306,7 +322,7 @@ public class DealershipSystem {
                         String engineType = read.readLine();
                         int cap = Integer.parseInt(read.readLine());
                         int eff = Integer.parseInt(read.readLine());
-                        car = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                        carObt = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
                     } else if(typeCar.equals("Electric")) {
                         boolean hasAutoPilot = read.readLine().equals("Y");
                         boolean hasModes = read.readLine().equals("Y");
@@ -318,8 +334,8 @@ public class DealershipSystem {
                         int baseMaintenanceFee = Integer.parseInt(read.readLine());
                         double batteryHealthPercentage = Double.parseDouble(read.readLine());
                         int chargingTime = Integer.parseInt(read.readLine());
-                        car = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
-                    } else {
+                        carObt = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                    } else if(typeCar.equals("Hybrid")){
                         boolean isRechargeable = read.readLine().equals("Y");
                         boolean hasModes = read.readLine().equals("Y");
                         boolean hasPlugIn = read.readLine().equals("Y");
@@ -332,19 +348,76 @@ public class DealershipSystem {
                         int powerReturnRate = Integer.parseInt(read.readLine());
                         int chargingTime = Integer.parseInt(read.readLine());
                         int fuelEfficiency = Integer.parseInt(read.readLine());
-                        car = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                        carObt = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
                     }
-                    transactions[x] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, car);
+                    typeCar = read.readLine();
+                    Vehicle carSold = null;
+                    if(typeCar.equals("Gas")) {
+                        int maxHorsePower = Integer.parseInt(read.readLine());
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        String engineType = read.readLine();
+                        int cap = Integer.parseInt(read.readLine());
+                        int eff = Integer.parseInt(read.readLine());
+                        carObt = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                    } else if(typeCar.equals("Electric")) {
+                        boolean hasAutoPilot = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        double batteryHealthPercentage = Double.parseDouble(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        carObt = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                    } else if(typeCar.equals("Hybrid")){
+                        boolean isRechargeable = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        boolean hasPlugIn = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        int powerReturnRate = Integer.parseInt(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        int fuelEfficiency = Integer.parseInt(read.readLine());
+                        carObt = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                    }
+                    transactions[x] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, carObt, carSold);
                 }
-                
-                customers[i] = new Customer(loyal, name, id, new Account[] {sellerAcc, buyerAcc, tradeAcc}, transactions);
+
+                customers[startIndex + idx] = new Customer(loyal, name, id, new Account[] {sellerAcc, buyerAcc, tradeAcc}, transactions);
             }
-        
+            numCustomer = startIndex + fileCount;
             read.close();
-            read = new BufferedReader(new FileReader(inventoryFileName));
-            numCars = Integer.parseInt(read.readLine());
-            vehicles = new Vehicle[numCars];
-            for(int i = 0; i < numCars; i++) {
+        } catch(IOException ex) {
+            appendMessage("I/O ERROR while loading customers: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
+        }
+    }
+
+    /**
+     * Load inventory (vehicles). If append==true, append to existing vehicles array.
+     */
+    public void loadInventory(String inventoryFileName, boolean append) {
+        try {
+            BufferedReader read = new BufferedReader(new FileReader(inventoryFileName));
+            int fileCount = Integer.parseInt(read.readLine());
+            int startIndex = 0;
+            if (append && vehicles != null) startIndex = numCars;
+            Vehicle[] newArr = new Vehicle[startIndex + fileCount];
+            if (append && vehicles != null) System.arraycopy(vehicles, 0, newArr, 0, numCars);
+            vehicles = newArr;
+            for (int idx = 0; idx < fileCount; idx++) {
                 String brandName = read.readLine();
                 String modelName = read.readLine();
                 int year = Integer.parseInt(read.readLine());
@@ -401,14 +474,31 @@ public class DealershipSystem {
                     int fuelEfficiency = Integer.parseInt(read.readLine());
                     car = new HybridVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
                 }
-                vehicles[i] = car;
+                vehicles[startIndex + idx] = car;
             }
-        
+            numCars = startIndex + fileCount;
             read.close();
-            read = new BufferedReader(new FileReader(transactionFileName));
-            numTransactions = Integer.parseInt(read.readLine());
-            transactionHistory = new Transaction[numTransactions];
-            for(int i = 0; i < numTransactions; i++) {
+        } catch(IOException ex) {
+            appendMessage("I/O ERROR while loading inventory: " + ex.getMessage());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            appendMessage(sw.toString());
+        }
+    }
+
+    /**
+     * Load transactions. If append==true, append to existing transactionHistory array.
+     */
+    public void loadTransactions(String transactionFileName, boolean append) {
+        try {
+            BufferedReader read = new BufferedReader(new FileReader(transactionFileName));
+            int fileCount = Integer.parseInt(read.readLine());
+            int startIndex = 0;
+            if (append && transactionHistory != null) startIndex = numTransactions;
+            Transaction[] newArr = new Transaction[startIndex + fileCount];
+            if (append && transactionHistory != null) System.arraycopy(transactionHistory, 0, newArr, 0, numTransactions);
+            transactionHistory = newArr;
+            for (int idx = 0; idx < fileCount; idx++) {
                 String thisName = read.readLine();
                 String ID = read.readLine();
                 int finalPrice = Integer.parseInt(read.readLine());
@@ -419,69 +509,130 @@ public class DealershipSystem {
                 int month = Integer.parseInt(read.readLine());
                 int date = Integer.parseInt(read.readLine());
                 int year = Integer.parseInt(read.readLine());
-                String brandName = read.readLine();
-                String modelName = read.readLine();
-                int carYear = Integer.parseInt(read.readLine());
-                int basePrice = Integer.parseInt(read.readLine());
-                String trim = read.readLine();
-                int maxSpeed = Integer.parseInt(read.readLine());
-                String type = read.readLine();
-                String wheel = read.readLine();
-                String trans = read.readLine();
-                int safe = Integer.parseInt(read.readLine());
-                int seats = Integer.parseInt(read.readLine());
-                String color = read.readLine();
-                int tow = Integer.parseInt(read.readLine());
-                String maintenance = read.readLine();
-                int range = Integer.parseInt(read.readLine());
-                String VIN = read.readLine();
-                String typeCar = read.readLine();
-                Vehicle car = null;
-                if(typeCar.equals("Gas")) {
-                    int maxHorsePower = Integer.parseInt(read.readLine());
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    String engineType = read.readLine();
-                    int cap = Integer.parseInt(read.readLine());
-                    int eff = Integer.parseInt(read.readLine());
-                    car = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
-                } else if(typeCar.equals("Electric")) {
-                    boolean hasAutoPilot = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    double batteryHealthPercentage = Double.parseDouble(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    car = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
-                } else {
-                    boolean isRechargeable = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    boolean hasPlugIn = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    int powerReturnRate = Integer.parseInt(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    int fuelEfficiency = Integer.parseInt(read.readLine());
-                    car = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                Vehicle carObt = null;
+                String check = read.readLine();
+                if(!check.equals("null")) {
+                    String brandName = check;
+                    String modelName = read.readLine();
+                    int carYear = Integer.parseInt(read.readLine());
+                    int basePrice = Integer.parseInt(read.readLine());
+                    String trim = read.readLine();
+                    int maxSpeed = Integer.parseInt(read.readLine());
+                    String type = read.readLine();
+                    String wheel = read.readLine();
+                    String trans = read.readLine();
+                    int safe = Integer.parseInt(read.readLine());
+                    int seats = Integer.parseInt(read.readLine());
+                    String color = read.readLine();
+                    int tow = Integer.parseInt(read.readLine());
+                    String maintenance = read.readLine();
+                    int range = Integer.parseInt(read.readLine());
+                    String VIN = read.readLine();
+                    String typeCar = read.readLine();
+                    if(typeCar.equals("Gas")) {
+                        int maxHorsePower = Integer.parseInt(read.readLine());
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        String engineType = read.readLine();
+                        int cap = Integer.parseInt(read.readLine());
+                        int eff = Integer.parseInt(read.readLine());
+                        carObt = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                    } else if(typeCar.equals("Electric")) {
+                        boolean hasAutoPilot = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        double batteryHealthPercentage = Double.parseDouble(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        carObt = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                    } else if(typeCar.equals("Hybrid")){
+                        boolean isRechargeable = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        boolean hasPlugIn = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        int powerReturnRate = Integer.parseInt(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        int fuelEfficiency = Integer.parseInt(read.readLine());
+                        carObt = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                    }
                 }
-                transactionHistory[i] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, car);
+                Vehicle carSold = null;
+                String temp = read.readLine();
+                if(!temp.equals("null")) {
+                    String brandName = check;
+                    String modelName = read.readLine();
+                    int carYear = Integer.parseInt(read.readLine());
+                    int basePrice = Integer.parseInt(read.readLine());
+                    String trim = read.readLine();
+                    int maxSpeed = Integer.parseInt(read.readLine());
+                    String type = read.readLine();
+                    String wheel = read.readLine();
+                    String trans = read.readLine();
+                    int safe = Integer.parseInt(read.readLine());
+                    int seats = Integer.parseInt(read.readLine());
+                    String color = read.readLine();
+                    int tow = Integer.parseInt(read.readLine());
+                    String maintenance = read.readLine();
+                    int range = Integer.parseInt(read.readLine());
+                    String VIN = read.readLine();
+                    String typeCar = read.readLine();
+                    if(typeCar.equals("Gas")) {
+                        int maxHorsePower = Integer.parseInt(read.readLine());
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        String engineType = read.readLine();
+                        int cap = Integer.parseInt(read.readLine());
+                        int eff = Integer.parseInt(read.readLine());
+                        carSold = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                    } else if(typeCar.equals("Electric")) {
+                        boolean hasAutoPilot = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        double batteryHealthPercentage = Double.parseDouble(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        carSold = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                    } else if(typeCar.equals("Hybrid")){
+                        boolean isRechargeable = read.readLine().equals("Y");
+                        boolean hasModes = read.readLine().equals("Y");
+                        boolean hasPlugIn = read.readLine().equals("Y");
+                        String chargerType = read.readLine();
+                        int mileage = Integer.parseInt(read.readLine());
+                        int age = Integer.parseInt(read.readLine());
+                        int warrantyExpireYear = Integer.parseInt(read.readLine());
+                        String lastMaintenance = read.readLine();
+                        int baseMaintenanceFee = Integer.parseInt(read.readLine());
+                        int powerReturnRate = Integer.parseInt(read.readLine());
+                        int chargingTime = Integer.parseInt(read.readLine());
+                        int fuelEfficiency = Integer.parseInt(read.readLine());
+                        carSold = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                    }
+                }    
+                transactionHistory[startIndex + idx] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, carObt, carSold);           
             }
-        
+            numTransactions = startIndex + fileCount;
             read.close();
         } catch(IOException ex) {
-            appendMessage("I/O ERROR while loading files: " + ex.getMessage());
-            // store stack trace into messages for GUI debugging
+            appendMessage("I/O ERROR while loading transactions: " + ex.getMessage());
             StringWriter sw = new StringWriter();
             ex.printStackTrace(new PrintWriter(sw));
             appendMessage(sw.toString());
@@ -700,12 +851,24 @@ public class DealershipSystem {
      * @return array of matching Transaction objects
      */
 
-    public Transaction[] searchTransactionsByVehicle(Vehicle vehicle) {
-        int count = searchTNVehicle(vehicle);
+    public Transaction[] searchTransactionsByVehicleSold(Vehicle vehicle) {
+        int count = searchTNVehicleSold(vehicle);
         Transaction[] result = new Transaction[count];
         int idx = 0;
         for (int i = 0; i < transactionHistory.length; i++) {
-            if (transactionHistory[i].getVehicle().equals(vehicle)) {
+            if (transactionHistory[i].getVehicleSold().equals(vehicle)) {
+                result[idx++] = transactionHistory[i];
+            }
+        }
+        return result;
+    }
+
+    public Transaction[] searchTransactionsByVehicleObtained(Vehicle vehicle) {
+        int count = searchTNVehicleObtained(vehicle);
+        Transaction[] result = new Transaction[count];
+        int idx = 0;
+        for (int i = 0; i < transactionHistory.length; i++) {
+            if (transactionHistory[i].getVehicleObtained().equals(vehicle)) {
                 result[idx++] = transactionHistory[i];
             }
         }
@@ -748,10 +911,20 @@ public class DealershipSystem {
      * @return number of matching transactions
      */
 
-    public int searchTNVehicle(Vehicle vehicle) {
+    public int searchTNVehicleSold(Vehicle vehicle) {
         int counter = 0;
         for (int i = 0; i < transactionHistory.length; i++) {
-            if (transactionHistory[i].getVehicle().equals(vehicle)) {
+            if (transactionHistory[i].getVehicleSold().equals(vehicle)) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public int searchTNVehicleObtained(Vehicle vehicle) {
+        int counter = 0;
+        for (int i = 0; i < transactionHistory.length; i++) {
+            if (transactionHistory[i].getVehicleObtained().equals(vehicle)) {
                 counter++;
             }
         }
@@ -1035,152 +1208,73 @@ public class DealershipSystem {
     }
 
     /**
-     * Load inventory from a file and overwrite current vehicles array.
-     * File format mirrors the format used in the constructor: first line is numCars,
-     * then for each car the fields in a fixed order including a type marker (Gas/Electric/Hybrid)
-     * followed by type-specific fields.
-     */
-    public void loadInventory(String inventoryFileName) {
-        try {
-            BufferedReader read = new BufferedReader(new FileReader(inventoryFileName));
-            numCars = Integer.parseInt(read.readLine());
-            vehicles = new Vehicle[numCars];
-            for (int i = 0; i < numCars; i++) {
-                String brandName = read.readLine();
-                String modelName = read.readLine();
-                int year = Integer.parseInt(read.readLine());
-                int basePrice = Integer.parseInt(read.readLine());
-                String trim = read.readLine();
-                int maxSpeed = Integer.parseInt(read.readLine());
-                String type = read.readLine();
-                String wheel = read.readLine();
-                String trans = read.readLine();
-                int safe = Integer.parseInt(read.readLine());
-                int seats = Integer.parseInt(read.readLine());
-                String color = read.readLine();
-                int tow = Integer.parseInt(read.readLine());
-                String maintenance = read.readLine();
-                int range = Integer.parseInt(read.readLine());
-                String VIN = read.readLine();
-                String typeCar = read.readLine();
-                Vehicle car = null;
-                if (typeCar.equals("Gas")) {
-                    int maxHorsePower = Integer.parseInt(read.readLine());
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    String engineType = read.readLine();
-                    int cap = Integer.parseInt(read.readLine());
-                    int eff = Integer.parseInt(read.readLine());
-                    car = new GasVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
-                } else if (typeCar.equals("Electric")) {
-                    boolean hasAutoPilot = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    double batteryHealthPercentage = Double.parseDouble(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    car = new ElectricVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
-                } else {
-                    boolean isRechargeable = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    boolean hasPlugIn = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    int powerReturnRate = Integer.parseInt(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    int fuelEfficiency = Integer.parseInt(read.readLine());
-                    car = new HybridVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
-                }
-                vehicles[i] = car;
-            }
-            read.close();
-        } catch (IOException ex) {
-            appendMessage("I/O ERROR while loading inventory: " + ex.getMessage());
-            StringWriter sw = new StringWriter();
-            ex.printStackTrace(new PrintWriter(sw));
-            appendMessage(sw.toString());
-        }
-    }
-
-    /**
      * Save current inventory to a file using the same format as loadInventory.
      */
     public void saveInventory(String inventoryFileName) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(inventoryFileName));
-            bw.write(String.valueOf(numCars) + System.lineSeparator());
+            bw.write(String.valueOf(numCars) + "\n");
             for (int i = 0; i < numCars; i++) {
                 Vehicle v = vehicles[i];
-                bw.write(v.getModelBrand() + System.lineSeparator());
-                bw.write(v.getModelName() + System.lineSeparator());
-                bw.write(String.valueOf(v.getYear()) + System.lineSeparator());
-                bw.write(String.valueOf(v.getBasePrice()) + System.lineSeparator());
-                bw.write(v.getTrimLevel() + System.lineSeparator());
-                bw.write(String.valueOf(v.getMaxSpeed()) + System.lineSeparator());
-                bw.write(v.getTypeVehicle() + System.lineSeparator());
-                bw.write(v.getTypeWheelControl() + System.lineSeparator());
-                bw.write(v.getTransmissionType() + System.lineSeparator());
-                bw.write(String.valueOf(v.getSafetyRating()) + System.lineSeparator());
-                bw.write(String.valueOf(v.getNumSeats()) + System.lineSeparator());
-                bw.write(v.getColor() + System.lineSeparator());
-                bw.write(String.valueOf(v.getTowRating()) + System.lineSeparator());
-                bw.write(v.getMaintenancePeriod() + System.lineSeparator());
-                bw.write(String.valueOf(v.getRange()) + System.lineSeparator());
-                bw.write(v.getVin() + System.lineSeparator());
+                bw.write(v.getModelBrand() + "\n");
+                bw.write(v.getModelName() + "\n");
+                bw.write(String.valueOf(v.getYear()) + "\n");
+                bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                bw.write(v.getTrimLevel() + "\n");
+                bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                bw.write(v.getTypeVehicle() + "\n");
+                bw.write(v.getTypeWheelControl() + "\n");
+                bw.write(v.getTransmissionType() + "\n");
+                bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                bw.write(v.getColor() + "\n");
+                bw.write(String.valueOf(v.getTowRating()) + "\n");
+                bw.write(v.getMaintenancePeriod() + "\n");
+                bw.write(String.valueOf(v.getRange()) + "\n");
+                bw.write(v.getVin() + "\n");
                 if (v instanceof GasVehicle) {
-                    bw.write("Gas" + System.lineSeparator());
+                    bw.write("Gas" + "\n");
                     GasVehicle gv = (GasVehicle) v;
-                    bw.write(String.valueOf(gv.getMaxHorsePower()) + System.lineSeparator());
+                    bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
                     GasSpec gs = gv.getGasSpec();
-                    bw.write(String.valueOf(gs.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(gs.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(gs.getEngineType() + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getFuelCapacity()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getFuelEfficiency()) + System.lineSeparator());
+                    bw.write(String.valueOf(gs.getMileage()) + "\n");
+                    bw.write(String.valueOf(gs.getAge()) + "\n");
+                    bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                    bw.write(gs.getLastMaintenance() + "\n");
+                    bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                    bw.write(gs.getEngineType() + "\n");
+                    bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                    bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
                 } else if (v instanceof ElectricVehicle) {
-                    bw.write("Electric" + System.lineSeparator());
+                    bw.write("Electric" + "\n");
                     ElectricVehicle ev = (ElectricVehicle) v;
-                    bw.write((ev.getHasAutoPilot() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((ev.getHasModes() ? "Y" : "N") + System.lineSeparator());
-                    bw.write(ev.getChargerType() + System.lineSeparator());
+                    bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                    bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                    bw.write(ev.getChargerType() + "\n");
                     ElectricSpec es = ev.getElectricSpec();
-                    bw.write(String.valueOf(es.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(es.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(es.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getBatteryHealthPercentage()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getChargingTime()) + System.lineSeparator());
+                    bw.write(String.valueOf(es.getMileage()) + "\n");
+                    bw.write(String.valueOf(es.getAge()) + "\n");
+                    bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                    bw.write(es.getLastMaintenance() + "\n");
+                    bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                    bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                    bw.write(String.valueOf(es.getChargingTime()) + "\n");
                 } else { // Hybrid
-                    bw.write("Hybrid" + System.lineSeparator());
+                    bw.write("Hybrid" + "\n");
                     HybridVehicle hv = (HybridVehicle) v;
-                    bw.write((hv.getIsRechargeable() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((hv.getHasModes() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((hv.getHasPlugIn() ? "Y" : "N") + System.lineSeparator());
-                    bw.write(hv.getChargerType() + System.lineSeparator());
+                    bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                    bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                    bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                    bw.write(hv.getChargerType() + "\n");
                     HybridSpec hs = hv.getHybridSpec();
-                    bw.write(String.valueOf(hs.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(hs.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getPowerReturnRate()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getChargingTime()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getFuelEfficiency()) + System.lineSeparator());
+                    bw.write(String.valueOf(hs.getMileage()) + "\n");
+                    bw.write(String.valueOf(hs.getAge()) + "\n");
+                    bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                    bw.write(hs.getLastMaintenance() + "\n");
+                    bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                    bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                    bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                    bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
                 }
             }
             bw.close();
@@ -1193,86 +1287,158 @@ public class DealershipSystem {
     }
 
     /**
-     * Load transaction history from file and overwrite current transactionHistory.
-     * File format mirrors the constructor's transaction section.
+     * Save transaction history to a file in the same format as loadTransactionHistory.
      */
-    public void loadTransactionHistory(String transactionFileName) {
+    public void saveTransactionHistory(String transactionFileName) {
         try {
-            BufferedReader read = new BufferedReader(new FileReader(transactionFileName));
-            numTransactions = Integer.parseInt(read.readLine());
-            transactionHistory = new Transaction[numTransactions];
+            BufferedWriter bw = new BufferedWriter(new FileWriter(transactionFileName));
+            bw.write(String.valueOf(numTransactions) + "\n");
             for (int i = 0; i < numTransactions; i++) {
-                String thisName = read.readLine();
-                String ID = read.readLine();
-                int finalPrice = Integer.parseInt(read.readLine());
-                boolean isTradeIn = read.readLine().equals("Y");
-                boolean isSeller = read.readLine().equals("Y");
-                boolean isBuyer = read.readLine().equals("Y");
-                boolean isLease = read.readLine().equals("Y");
-                int month = Integer.parseInt(read.readLine());
-                int date = Integer.parseInt(read.readLine());
-                int year = Integer.parseInt(read.readLine());
-                String brandName = read.readLine();
-                String modelName = read.readLine();
-                int carYear = Integer.parseInt(read.readLine());
-                int basePrice = Integer.parseInt(read.readLine());
-                String trim = read.readLine();
-                int maxSpeed = Integer.parseInt(read.readLine());
-                String type = read.readLine();
-                String wheel = read.readLine();
-                String trans = read.readLine();
-                int safe = Integer.parseInt(read.readLine());
-                int seats = Integer.parseInt(read.readLine());
-                String color = read.readLine();
-                int tow = Integer.parseInt(read.readLine());
-                String maintenance = read.readLine();
-                int range = Integer.parseInt(read.readLine());
-                String VIN = read.readLine();
-                String typeCar = read.readLine();
-                Vehicle car = null;
-                if (typeCar.equals("Gas")) {
-                    int maxHorsePower = Integer.parseInt(read.readLine());
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    String engineType = read.readLine();
-                    int cap = Integer.parseInt(read.readLine());
-                    int eff = Integer.parseInt(read.readLine());
-                    car = new GasVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
-                } else if (typeCar.equals("Electric")) {
-                    boolean hasAutoPilot = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    double batteryHealthPercentage = Double.parseDouble(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    car = new ElectricVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                Transaction t = transactionHistory[i];
+                bw.write(t.getCustomerName() + "\n");
+                bw.write(t.getCustomerID() + "\n");
+                bw.write(String.valueOf(t.getFinalPrice()) + "\n");
+                bw.write((t.getIsTradeIn() ? "Y" : "N") + "\n");
+                bw.write((t.getIsSold() ? "Y" : "N") + "\n");
+                bw.write((t.getIsBought() ? "Y" : "N") + "\n");
+                bw.write((t.getIsLease() ? "Y" : "N") + "\n");
+                bw.write(String.valueOf(t.getMonth()) + "\n");
+                bw.write(String.valueOf(t.getDate()) + "\n");
+                bw.write(String.valueOf(t.getYear()) + "\n");
+                Vehicle v = t.getVehicleSold();
+                if(v != null) {
+                    bw.write(v.getModelBrand() + "\n");
+                    bw.write(v.getModelName() + "\n");
+                    bw.write(String.valueOf(v.getYear()) + "\n");
+                    bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                    bw.write(v.getTrimLevel() + "\n");
+                    bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                    bw.write(v.getTypeVehicle() + "\n");
+                    bw.write(v.getTypeWheelControl() + "\n");
+                    bw.write(v.getTransmissionType() + "\n");
+                    bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                    bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                    bw.write(v.getColor() + "\n");
+                    bw.write(String.valueOf(v.getTowRating()) + "\n");
+                    bw.write(v.getMaintenancePeriod() + "\n");
+                    bw.write(String.valueOf(v.getRange()) + "\n");
+                    bw.write(v.getVin() + "\n");
+                    if (v instanceof GasVehicle) {
+                        bw.write("Gas" + "\n");
+                        GasVehicle gv = (GasVehicle) v;
+                        bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                        GasSpec gs = gv.getGasSpec();
+                        bw.write(String.valueOf(gs.getMileage()) + "\n");
+                        bw.write(String.valueOf(gs.getAge()) + "\n");
+                        bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                        bw.write(gs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(gs.getEngineType() + "\n");
+                        bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                        bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                    } else if (v instanceof ElectricVehicle) {
+                        bw.write("Electric" + "\n");
+                        ElectricVehicle ev = (ElectricVehicle) v;
+                        bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                        bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write(ev.getChargerType() + "\n");
+                        ElectricSpec es = ev.getElectricSpec();
+                        bw.write(String.valueOf(es.getMileage()) + "\n");
+                        bw.write(String.valueOf(es.getAge()) + "\n");
+                        bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                        bw.write(es.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                        bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                    } else { // Hybrid
+                        bw.write("Hybrid" + "\n");
+                        HybridVehicle hv = (HybridVehicle) v;
+                        bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                        bw.write(hv.getChargerType() + "\n");
+                        HybridSpec hs = hv.getHybridSpec();
+                        bw.write(String.valueOf(hs.getMileage()) + "\n");
+                        bw.write(String.valueOf(hs.getAge()) + "\n");
+                        bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                        bw.write(hs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                        bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                        bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                    }
                 } else {
-                    boolean isRechargeable = read.readLine().equals("Y");
-                    boolean hasModes = read.readLine().equals("Y");
-                    boolean hasPlugIn = read.readLine().equals("Y");
-                    String chargerType = read.readLine();
-                    int mileage = Integer.parseInt(read.readLine());
-                    int age = Integer.parseInt(read.readLine());
-                    int warrantyExpireYear = Integer.parseInt(read.readLine());
-                    String lastMaintenance = read.readLine();
-                    int baseMaintenanceFee = Integer.parseInt(read.readLine());
-                    int powerReturnRate = Integer.parseInt(read.readLine());
-                    int chargingTime = Integer.parseInt(read.readLine());
-                    int fuelEfficiency = Integer.parseInt(read.readLine());
-                    car = new HybridVehicle(modelName, brandName, type, carYear, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                    bw.write("null\n");
                 }
-                transactionHistory[i] = new Transaction(thisName, ID, finalPrice, isTradeIn, isSeller, isBuyer, isLease, month, date, year, car);
+                v = t.getVehicleObtained();
+                if(v != null) {
+                    bw.write(v.getModelBrand() + "\n");
+                    bw.write(v.getModelName() + "\n");
+                    bw.write(String.valueOf(v.getYear()) + "\n");
+                    bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                    bw.write(v.getTrimLevel() + "\n");
+                    bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                    bw.write(v.getTypeVehicle() + "\n");
+                    bw.write(v.getTypeWheelControl() + "\n");
+                    bw.write(v.getTransmissionType() + "\n");
+                    bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                    bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                    bw.write(v.getColor() + "\n");
+                    bw.write(String.valueOf(v.getTowRating()) + "\n");
+                    bw.write(v.getMaintenancePeriod() + "\n");
+                    bw.write(String.valueOf(v.getRange()) + "\n");
+                    bw.write(v.getVin() + "\n");
+                    if (v instanceof GasVehicle) {
+                        bw.write("Gas" + "\n");
+                        GasVehicle gv = (GasVehicle) v;
+                        bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                        GasSpec gs = gv.getGasSpec();
+                        bw.write(String.valueOf(gs.getMileage()) + "\n");
+                        bw.write(String.valueOf(gs.getAge()) + "\n");
+                        bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                        bw.write(gs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(gs.getEngineType() + "\n");
+                        bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                        bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                    } else if (v instanceof ElectricVehicle) {
+                        bw.write("Electric" + "\n");
+                        ElectricVehicle ev = (ElectricVehicle) v;
+                        bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                        bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write(ev.getChargerType() + "\n");
+                        ElectricSpec es = ev.getElectricSpec();
+                        bw.write(String.valueOf(es.getMileage()) + "\n");
+                        bw.write(String.valueOf(es.getAge()) + "\n");
+                        bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                        bw.write(es.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                        bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                    } else { // Hybrid
+                        bw.write("Hybrid" + "\n");
+                        HybridVehicle hv = (HybridVehicle) v;
+                        bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                        bw.write(hv.getChargerType() + "\n");
+                        HybridSpec hs = hv.getHybridSpec();
+                        bw.write(String.valueOf(hs.getMileage()) + "\n");
+                        bw.write(String.valueOf(hs.getAge()) + "\n");
+                        bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                        bw.write(hs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                        bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                        bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                    }
+                } else {
+                    bw.write("null\n");
+                }
             }
-            read.close();
+            bw.close();
         } catch (IOException ex) {
-            appendMessage("I/O ERROR while loading transaction history: " + ex.getMessage());
+            appendMessage("I/O ERROR while saving transaction history: " + ex.getMessage());
             StringWriter sw = new StringWriter();
             ex.printStackTrace(new PrintWriter(sw));
             appendMessage(sw.toString());
@@ -1280,89 +1446,409 @@ public class DealershipSystem {
     }
 
     /**
-     * Save transaction history to a file in the same format as loadTransactionHistory.
+     * Save customers to a file in the same format expected by loadCustomers.
      */
-    public void saveTransactionHistory(String transactionFileName) {
+    public void saveCustomers(String customerFileName) {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(transactionFileName));
-            bw.write(String.valueOf(numTransactions) + System.lineSeparator());
-            for (int i = 0; i < numTransactions; i++) {
-                Transaction t = transactionHistory[i];
-                bw.write(t.getCustomerName() + System.lineSeparator());
-                bw.write(t.getCustomerID() + System.lineSeparator());
-                bw.write(String.valueOf(t.getFinalPrice()) + System.lineSeparator());
-                bw.write((t.getIsTradeIn() ? "Y" : "N") + System.lineSeparator());
-                bw.write((t.getIsSold() ? "Y" : "N") + System.lineSeparator());
-                bw.write((t.getIsBought() ? "Y" : "N") + System.lineSeparator());
-                bw.write((t.getIsLease() ? "Y" : "N") + System.lineSeparator());
-                bw.write(String.valueOf(t.getMonth()) + System.lineSeparator());
-                bw.write(String.valueOf(t.getDate()) + System.lineSeparator());
-                bw.write(String.valueOf(t.getYear()) + System.lineSeparator());
-                Vehicle v = t.getVehicle();
-                bw.write(v.getModelBrand() + System.lineSeparator());
-                bw.write(v.getModelName() + System.lineSeparator());
-                bw.write(String.valueOf(v.getYear()) + System.lineSeparator());
-                bw.write(String.valueOf(v.getBasePrice()) + System.lineSeparator());
-                bw.write(v.getTrimLevel() + System.lineSeparator());
-                bw.write(String.valueOf(v.getMaxSpeed()) + System.lineSeparator());
-                bw.write(v.getTypeVehicle() + System.lineSeparator());
-                bw.write(v.getTypeWheelControl() + System.lineSeparator());
-                bw.write(v.getTransmissionType() + System.lineSeparator());
-                bw.write(String.valueOf(v.getSafetyRating()) + System.lineSeparator());
-                bw.write(String.valueOf(v.getNumSeats()) + System.lineSeparator());
-                bw.write(v.getColor() + System.lineSeparator());
-                bw.write(String.valueOf(v.getTowRating()) + System.lineSeparator());
-                bw.write(v.getMaintenancePeriod() + System.lineSeparator());
-                bw.write(String.valueOf(v.getRange()) + System.lineSeparator());
-                bw.write(v.getVin() + System.lineSeparator());
-                if (v instanceof GasVehicle) {
-                    bw.write("Gas" + System.lineSeparator());
-                    GasVehicle gv = (GasVehicle) v;
-                    bw.write(String.valueOf(gv.getMaxHorsePower()) + System.lineSeparator());
-                    GasSpec gs = gv.getGasSpec();
-                    bw.write(String.valueOf(gs.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(gs.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(gs.getEngineType() + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getFuelCapacity()) + System.lineSeparator());
-                    bw.write(String.valueOf(gs.getFuelEfficiency()) + System.lineSeparator());
-                } else if (v instanceof ElectricVehicle) {
-                    bw.write("Electric" + System.lineSeparator());
-                    ElectricVehicle ev = (ElectricVehicle) v;
-                    bw.write((ev.getHasAutoPilot() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((ev.getHasModes() ? "Y" : "N") + System.lineSeparator());
-                    bw.write(ev.getChargerType() + System.lineSeparator());
-                    ElectricSpec es = ev.getElectricSpec();
-                    bw.write(String.valueOf(es.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(es.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(es.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getBatteryHealthPercentage()) + System.lineSeparator());
-                    bw.write(String.valueOf(es.getChargingTime()) + System.lineSeparator());
-                } else { // Hybrid
-                    bw.write("Hybrid" + System.lineSeparator());
-                    HybridVehicle hv = (HybridVehicle) v;
-                    bw.write((hv.getIsRechargeable() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((hv.getHasModes() ? "Y" : "N") + System.lineSeparator());
-                    bw.write((hv.getHasPlugIn() ? "Y" : "N") + System.lineSeparator());
-                    bw.write(hv.getChargerType() + System.lineSeparator());
-                    HybridSpec hs = hv.getHybridSpec();
-                    bw.write(String.valueOf(hs.getMileage()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getAge()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getWarrantyExpireYear()) + System.lineSeparator());
-                    bw.write(hs.getLastMaintenance() + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getPowerReturnRate()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getChargingTime()) + System.lineSeparator());
-                    bw.write(String.valueOf(hs.getFuelEfficiency()) + System.lineSeparator());
+            BufferedWriter bw = new BufferedWriter(new FileWriter(customerFileName));
+            bw.write(String.valueOf(numCustomer) + "\n");
+            for (int i = 0; i < numCustomer; i++) {
+                Customer c = customers[i];
+                bw.write(c.getName() + "\n");
+                bw.write(c.getId() + "\n");
+                bw.write(String.valueOf(c.getLoyaltyPoint()) + "\n");
+                // Seller marker (legacy) - write a placeholder then write seller block or "null"
+                bw.write("seller" + "\n");
+                Account sa = c.getSellerAccount();
+                if (sa == null) {
+                    bw.write("null" + "\n");
+                } else {
+                    SellerAccount s = (SellerAccount) sa;
+                    bw.write((s.isOrganization() ? "Y" : "N") + "\n");
+                    bw.write((s.isFamily() ? "Y" : "N") + "\n");
+                    bw.write(String.valueOf(s.getOfferedPrice()) + "\n");
+                    bw.write(String.valueOf(s.getRating()) + "\n");
+                    Vehicle v = s.getOwnedVehicle();
+                    bw.write(v.getModelBrand() + "\n");
+                    bw.write(v.getModelName() + "\n");
+                    bw.write(String.valueOf(v.getYear()) + "\n");
+                    bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                    bw.write(v.getTrimLevel() + "\n");
+                    bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                    bw.write(v.getTypeVehicle() + "\n");
+                    bw.write(v.getTypeWheelControl() + "\n");
+                    bw.write(v.getTransmissionType() + "\n");
+                    bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                    bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                    bw.write(v.getColor() + "\n");
+                    bw.write(String.valueOf(v.getTowRating()) + "\n");
+                    bw.write(v.getMaintenancePeriod() + "\n");
+                    bw.write(String.valueOf(v.getRange()) + "\n");
+                    bw.write(v.getVin() + "\n");
+                    if (v instanceof GasVehicle) {
+                        bw.write("Gas" + "\n");
+                        GasVehicle gv = (GasVehicle) v;
+                        bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                        GasSpec gs = gv.getGasSpec();
+                        bw.write(String.valueOf(gs.getMileage()) + "\n");
+                        bw.write(String.valueOf(gs.getAge()) + "\n");
+                        bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                        bw.write(gs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(gs.getEngineType() + "\n");
+                        bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                        bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                    } else if (v instanceof ElectricVehicle) {
+                        bw.write("Electric" + "\n");
+                        ElectricVehicle ev = (ElectricVehicle) v;
+                        bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                        bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write(ev.getChargerType() + "\n");
+                        ElectricSpec es = ev.getElectricSpec();
+                        bw.write(String.valueOf(es.getMileage()) + "\n");
+                        bw.write(String.valueOf(es.getAge()) + "\n");
+                        bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                        bw.write(es.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                        bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                    } else { // Hybrid
+                        bw.write("Hybrid" + "\n");
+                        HybridVehicle hv = (HybridVehicle) v;
+                        bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                        bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                        bw.write(hv.getChargerType() + "\n");
+                        HybridSpec hs = hv.getHybridSpec();
+                        bw.write(String.valueOf(hs.getMileage()) + "\n");
+                        bw.write(String.valueOf(hs.getAge()) + "\n");
+                        bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                        bw.write(hs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                        bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                        bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                    }
+                    // range of accept for seller
+                    bw.write(String.valueOf(s.getRangeOfAccept()) + "\n");
+                }
+
+                // buyer marker (legacy)
+                bw.write("buyer" + "\n");
+                Account ba = c.getBuyerAccount();
+                if (ba == null) {
+                    bw.write("null" + "\n");
+                } else {
+                    BuyerAccount b = (BuyerAccount) ba;
+                    bw.write((b.isOrganization() ? "Y" : "N") + "\n");
+                    bw.write((b.isFamily() ? "Y" : "N") + "\n");
+                    bw.write(String.valueOf(b.getBudget()) + "\n");
+                    Spec exp = b.getExpectations();
+                    if (exp instanceof GasSpec) {
+                        bw.write("Gas" + "\n");
+                        GasSpec gs = (GasSpec) exp;
+                        bw.write(String.valueOf(gs.getMileage()) + "\n");
+                        bw.write(String.valueOf(gs.getAge()) + "\n");
+                        bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                        bw.write(gs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(gs.getEngineType() + "\n");
+                        bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                        bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                    } else if (exp instanceof ElectricSpec) {
+                        bw.write("Electric" + "\n");
+                        ElectricSpec es = (ElectricSpec) exp;
+                        bw.write(String.valueOf(es.getMileage()) + "\n");
+                        bw.write(String.valueOf(es.getAge()) + "\n");
+                        bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                        bw.write(es.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                        bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                    } else if (exp instanceof HybridSpec) {
+                        bw.write("Hybrid" + "\n");
+                        HybridSpec hs = (HybridSpec) exp;
+                        bw.write(String.valueOf(hs.getMileage()) + "\n");
+                        bw.write(String.valueOf(hs.getAge()) + "\n");
+                        bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                        bw.write(hs.getLastMaintenance() + "\n");
+                        bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                        bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                        bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                        bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                    } else {
+                        // fallback
+                        bw.write("null" + "\n");
+                    }
+                    bw.write(String.valueOf(b.getPercentMatch()) + "\n");
+                    bw.write(String.valueOf(b.getRangeOfAccept()) + "\n");
+                }
+
+                // trade-in marker (legacy)
+                bw.write("TradeIn" + "\n");
+                Account ta = c.getTradeInAccount();
+                if (ta == null) {
+                    bw.write("null" + "\n");
+                } else {
+                    TradeInAccount t = (TradeInAccount) ta;
+                    bw.write((t.isOrganization() ? "Y" : "N") + "\n");
+                    bw.write((t.isFamily() ? "Y" : "N") + "\n");
+                    Vehicle tv = t.getVehicleForTrading();
+                    if (tv == null) {
+                        bw.write("null" + "\n");
+                    } else {
+                        bw.write(tv.getModelBrand() + "\n");
+                        bw.write(tv.getModelName() + "\n");
+                        bw.write(String.valueOf(tv.getYear()) + "\n");
+                        bw.write(String.valueOf(tv.getBasePrice()) + "\n");
+                        bw.write(tv.getTrimLevel() + "\n");
+                        bw.write(String.valueOf(tv.getMaxSpeed()) + "\n");
+                        bw.write(tv.getTypeVehicle() + "\n");
+                        bw.write(tv.getTypeWheelControl() + "\n");
+                        bw.write(tv.getTransmissionType() + "\n");
+                        bw.write(String.valueOf(tv.getSafetyRating()) + "\n");
+                        bw.write(String.valueOf(tv.getNumSeats()) + "\n");
+                        bw.write(tv.getColor() + "\n");
+                        bw.write(String.valueOf(tv.getTowRating()) + "\n");
+                        bw.write(tv.getMaintenancePeriod() + "\n");
+                        bw.write(String.valueOf(tv.getRange()) + "\n");
+                        bw.write(tv.getVin() + "\n");
+                        if (tv instanceof GasVehicle) {
+                            bw.write("Gas" + "\n");
+                            GasVehicle gv = (GasVehicle) tv;
+                            bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                            GasSpec gs = gv.getGasSpec();
+                            bw.write(String.valueOf(gs.getMileage()) + "\n");
+                            bw.write(String.valueOf(gs.getAge()) + "\n");
+                            bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                            bw.write(gs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(gs.getEngineType() + "\n");
+                            bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                            bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                        } else if (tv instanceof ElectricVehicle) {
+                            bw.write("Electric" + "\n");
+                            ElectricVehicle ev = (ElectricVehicle) tv;
+                            bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                            bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write(ev.getChargerType() + "\n");
+                            ElectricSpec es = ev.getElectricSpec();
+                            bw.write(String.valueOf(es.getMileage()) + "\n");
+                            bw.write(String.valueOf(es.getAge()) + "\n");
+                            bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                            bw.write(es.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                            bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                        } else { // Hybrid
+                            bw.write("Hybrid" + "\n");
+                            HybridVehicle hv = (HybridVehicle) tv;
+                            bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                            bw.write(hv.getChargerType() + "\n");
+                            HybridSpec hs = hv.getHybridSpec();
+                            bw.write(String.valueOf(hs.getMileage()) + "\n");
+                            bw.write(String.valueOf(hs.getAge()) + "\n");
+                            bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                            bw.write(hs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                            bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                            bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                        }
+                        bw.write(String.valueOf(t.getRating() + "\n"));
+                        Spec expectation = t.getExpectation();
+                        if(expectation != null) {
+                            if(expectation instanceof GasSpec) {
+                                GasSpec gs = (GasSpec)expectation;
+                                bw.write(String.valueOf("Gas\n"));
+                                bw.write(String.valueOf(gs.getMileage() + "\n"));
+                                bw.write(String.valueOf(gs.getAge() + "\n"));
+                                bw.write(String.valueOf(gs.getWarrantyExpireYear() + "\n"));
+                                bw.write(String.valueOf(gs.getLastMaintenance() + "\n"));
+                                bw.write(String.valueOf(gs.getBaseMaintenanceFee() + "\n"));
+                                bw.write(String.valueOf(gs.getEngineType() + "\n"));
+                                bw.write(String.valueOf(gs.getFuelCapacity() + "\n"));
+                                bw.write(String.valueOf(gs.getFuelEfficiency() + "\n"));
+                            } else if(expectation instanceof ElectricSpec) {
+                                ElectricSpec es = (ElectricSpec)expectation;
+                                bw.write(String.valueOf("Electric\n"));
+                                bw.write(String.valueOf(es.getMileage() + "\n"));
+                                bw.write(String.valueOf(es.getAge() + "\n"));
+                                bw.write(String.valueOf(es.getWarrantyExpireYear() + "\n"));
+                                bw.write(String.valueOf(es.getLastMaintenance() + "\n"));
+                                bw.write(String.valueOf(es.getBaseMaintenanceFee() + "\n"));
+                                bw.write(String.valueOf(es.getBatteryHealthPercentage() + "\n"));
+                                bw.write(String.valueOf(es.getChargingTime() + "\n"));
+                            } else {
+                                HybridSpec hs = (HybridSpec)expectation;
+                                bw.write(String.valueOf("Hybrid\n"));
+                                bw.write(String.valueOf(hs.getMileage() + "\n"));
+                                bw.write(String.valueOf(hs.getAge() + "\n"));
+                                bw.write(String.valueOf(hs.getWarrantyExpireYear() + "\n"));
+                                bw.write(String.valueOf(hs.getLastMaintenance() + "\n"));
+                                bw.write(String.valueOf(hs.getBaseMaintenanceFee() + "\n"));
+                                bw.write(String.valueOf(hs.getPowerReturnRate() + "\n"));
+                                bw.write(String.valueOf(hs.getChargingTime() + "\n"));
+                                bw.write(String.valueOf(hs.getFuelEfficiency() + "\n"));                            }
+                        } else {
+                            bw.write(String.valueOf("null\n"));
+                        }
+                        bw.write(String.valueOf(t.getPercentMatch() + "\n"));
+                        bw.write(String.valueOf(t.getRangeOfAccept() + "\n"));
+                        }
+                }
+                
+                // write customer's transaction history
+                Transaction[] th = c.getCustomerTransactionHistory();
+                bw.write(String.valueOf(th.length) + "\n");
+                for (Transaction tr : th) {
+                    bw.write(tr.getCustomerName() + "\n");
+                    bw.write(tr.getCustomerID() + "\n");
+                    bw.write(String.valueOf(tr.getFinalPrice()) + "\n");
+                    bw.write((tr.getIsTradeIn() ? "Y" : "N") + "\n");
+                    bw.write((tr.getIsSold() ? "Y" : "N") + "\n");
+                    bw.write((tr.getIsBought() ? "Y" : "N") + "\n");
+                    bw.write((tr.getIsLease() ? "Y" : "N") + "\n");
+                    bw.write(String.valueOf(tr.getMonth()) + "\n");
+                    bw.write(String.valueOf(tr.getDate()) + "\n");
+                    bw.write(String.valueOf(tr.getYear()) + "\n");
+                    Vehicle v = tr.getVehicleSold();
+                    if(v != null) {
+                        bw.write(v.getModelBrand() + "\n");
+                        bw.write(v.getModelName() + "\n");
+                        bw.write(String.valueOf(v.getYear()) + "\n");
+                        bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                        bw.write(v.getTrimLevel() + "\n");
+                        bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                        bw.write(v.getTypeVehicle() + "\n");
+                        bw.write(v.getTypeWheelControl() + "\n");
+                        bw.write(v.getTransmissionType() + "\n");
+                        bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                        bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                        bw.write(v.getColor() + "\n");
+                        bw.write(String.valueOf(v.getTowRating()) + "\n");
+                        bw.write(v.getMaintenancePeriod() + "\n");
+                        bw.write(String.valueOf(v.getRange()) + "\n");
+                        bw.write(v.getVin() + "\n");
+                        if (v instanceof GasVehicle) {
+                            bw.write("Gas" + "\n");
+                            GasVehicle gv = (GasVehicle) v;
+                            bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                            GasSpec gs = gv.getGasSpec();
+                            bw.write(String.valueOf(gs.getMileage()) + "\n");
+                            bw.write(String.valueOf(gs.getAge()) + "\n");
+                            bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                            bw.write(gs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(gs.getEngineType() + "\n");
+                            bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                            bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                        } else if (v instanceof ElectricVehicle) {
+                            bw.write("Electric" + "\n");
+                            ElectricVehicle ev = (ElectricVehicle) v;
+                            bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                            bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write(ev.getChargerType() + "\n");
+                            ElectricSpec es = ev.getElectricSpec();
+                            bw.write(String.valueOf(es.getMileage()) + "\n");
+                            bw.write(String.valueOf(es.getAge()) + "\n");
+                            bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                            bw.write(es.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                            bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                        } else { // Hybrid
+                            bw.write("Hybrid" + "\n");
+                            HybridVehicle hv = (HybridVehicle) v;
+                            bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                            bw.write(hv.getChargerType() + "\n");
+                            HybridSpec hs = hv.getHybridSpec();
+                            bw.write(String.valueOf(hs.getMileage()) + "\n");
+                            bw.write(String.valueOf(hs.getAge()) + "\n");
+                            bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                            bw.write(hs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                            bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                            bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                        }
+                    } else {
+                        bw.write("null\n");
+                    }
+                    v = tr.getVehicleObtained();
+                    if(v != null) {
+                        bw.write(v.getModelBrand() + "\n");
+                        bw.write(v.getModelName() + "\n");
+                        bw.write(String.valueOf(v.getYear()) + "\n");
+                        bw.write(String.valueOf(v.getBasePrice()) + "\n");
+                        bw.write(v.getTrimLevel() + "\n");
+                        bw.write(String.valueOf(v.getMaxSpeed()) + "\n");
+                        bw.write(v.getTypeVehicle() + "\n");
+                        bw.write(v.getTypeWheelControl() + "\n");
+                        bw.write(v.getTransmissionType() + "\n");
+                        bw.write(String.valueOf(v.getSafetyRating()) + "\n");
+                        bw.write(String.valueOf(v.getNumSeats()) + "\n");
+                        bw.write(v.getColor() + "\n");
+                        bw.write(String.valueOf(v.getTowRating()) + "\n");
+                        bw.write(v.getMaintenancePeriod() + "\n");
+                        bw.write(String.valueOf(v.getRange()) + "\n");
+                        bw.write(v.getVin() + "\n");
+                        if (v instanceof GasVehicle) {
+                            bw.write("Gas" + "\n");
+                            GasVehicle gv = (GasVehicle) v;
+                            bw.write(String.valueOf(gv.getMaxHorsePower()) + "\n");
+                            GasSpec gs = gv.getGasSpec();
+                            bw.write(String.valueOf(gs.getMileage()) + "\n");
+                            bw.write(String.valueOf(gs.getAge()) + "\n");
+                            bw.write(String.valueOf(gs.getWarrantyExpireYear()) + "\n");
+                            bw.write(gs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(gs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(gs.getEngineType() + "\n");
+                            bw.write(String.valueOf(gs.getFuelCapacity()) + "\n");
+                            bw.write(String.valueOf(gs.getFuelEfficiency()) + "\n");
+                        } else if (v instanceof ElectricVehicle) {
+                            bw.write("Electric" + "\n");
+                            ElectricVehicle ev = (ElectricVehicle) v;
+                            bw.write((ev.getHasAutoPilot() ? "Y" : "N") + "\n");
+                            bw.write((ev.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write(ev.getChargerType() + "\n");
+                            ElectricSpec es = ev.getElectricSpec();
+                            bw.write(String.valueOf(es.getMileage()) + "\n");
+                            bw.write(String.valueOf(es.getAge()) + "\n");
+                            bw.write(String.valueOf(es.getWarrantyExpireYear()) + "\n");
+                            bw.write(es.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(es.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(es.getBatteryHealthPercentage()) + "\n");
+                            bw.write(String.valueOf(es.getChargingTime()) + "\n");
+                        } else { // Hybrid
+                            bw.write("Hybrid" + "\n");
+                            HybridVehicle hv = (HybridVehicle) v;
+                            bw.write((hv.getIsRechargeable() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasModes() ? "Y" : "N") + "\n");
+                            bw.write((hv.getHasPlugIn() ? "Y" : "N") + "\n");
+                            bw.write(hv.getChargerType() + "\n");
+                            HybridSpec hs = hv.getHybridSpec();
+                            bw.write(String.valueOf(hs.getMileage()) + "\n");
+                            bw.write(String.valueOf(hs.getAge()) + "\n");
+                            bw.write(String.valueOf(hs.getWarrantyExpireYear()) + "\n");
+                            bw.write(hs.getLastMaintenance() + "\n");
+                            bw.write(String.valueOf(hs.getBaseMaintenanceFee()) + "\n");
+                            bw.write(String.valueOf(hs.getPowerReturnRate()) + "\n");
+                            bw.write(String.valueOf(hs.getChargingTime()) + "\n");
+                            bw.write(String.valueOf(hs.getFuelEfficiency()) + "\n");
+                        }
+                    } else {
+                        bw.write("null\n");
+                    }
                 }
             }
             bw.close();
         } catch (IOException ex) {
-            appendMessage("I/O ERROR while saving transaction history: " + ex.getMessage());
+            appendMessage("I/O ERROR while saving customers: " + ex.getMessage());
             StringWriter sw = new StringWriter();
             ex.printStackTrace(new PrintWriter(sw));
             appendMessage(sw.toString());
@@ -1550,7 +2036,12 @@ public class DealershipSystem {
         return true;
     }
 
-    // public String showAllApplicableForBuyer() {
-
-    // }
+    public Vehicle[] showAllApplicableForCustomer(Account acc) {
+        if(acc instanceof BuyerAccount) {
+            return ((BuyerAccount)acc).showAllApplicableVehicles(vehicles);
+        } else {
+            return ((TradeInAccount)acc).showAllApplicableVehicles(vehicles);
+        }
+        
+    }
 }

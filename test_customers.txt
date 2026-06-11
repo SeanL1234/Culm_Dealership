@@ -9,7 +9,6 @@ Y
 N
 25000
 Gas
-Gas
 12000
 2
 0
@@ -62,7 +61,6 @@ buyer
 N
 Y
 18000
-Electric
 Electric
 8000
 1

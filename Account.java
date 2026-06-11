@@ -40,6 +40,14 @@ abstract class Account {
      */
     abstract boolean validate(Vehicle[] vehicles);
 
+    public boolean isOrganization() {
+        return isOrganization;
+    }
+
+    public boolean isFamily() {
+        return isFamily;
+    }
+
     /**
      * Returns a string representation of the Account.
      * @return String containing the organization and family status

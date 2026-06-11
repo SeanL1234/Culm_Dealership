@@ -47,7 +47,8 @@ public class Transaction {
    private int year;
 
    /** Vehicle involved in the transaction. */
-   private Vehicle vehicle;
+   private Vehicle obtainedVehicle;
+   private Vehicle soldVehicle;
    
    // Accessors
 
@@ -102,8 +103,12 @@ public class Transaction {
    }
 
    /** @return vehicle involved in the transaction */
-   public Vehicle getVehicle(){
-      return vehicle;
+   public Vehicle getVehicleSold(){
+      return soldVehicle;
+   }
+
+   public Vehicle getVehicleObtained(){
+      return obtainedVehicle;
    }
    /**
     * Returns the vehicle involved in this transaction.
@@ -171,10 +176,10 @@ public class Transaction {
       }
    }
 
-   /** @param vehicle vehicle involved in the transaction */
-   public void setVehicle (Vehicle vehicle){
-      this.vehicle = vehicle;
-   }
+   // /** @param vehicle vehicle involved in the transaction */
+   // public void setVehicle (Vehicle vehicle){
+   //    this.vehicle = vehicle;
+   // }
    /**
     * Sets the vehicle involved in this transaction.
     * @param vehicle Vehicle object
@@ -195,7 +200,7 @@ public class Transaction {
     * @param year transaction year
     * @param vehicle vehicle involved in the transaction
     */
-   public Transaction(String customerName, String customerID, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle vehicle){
+   public Transaction(String customerName, String customerID, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle obtainedVehicle, Vehicle soldVehicle){
       this.customerName = customerName;
       this.customerID = customerID;
       this.finalPrice = finalPrice;
@@ -206,7 +211,8 @@ public class Transaction {
       this.month = month;
       this.date = date;
       this.year = year;
-      this.vehicle = vehicle;
+      this.obtainedVehicle = obtainedVehicle;
+      this.soldVehicle = soldVehicle;
    }
    
    /**
@@ -215,7 +221,12 @@ public class Transaction {
     * @return profit amount
     */
    public int determineProfitMade(){
-      return finalPrice-vehicle.getBasePrice();
+      if(finalPrice == -1) {
+         return obtainedVehicle.getBasePrice() - soldVehicle.getBasePrice();
+      } else if(soldVehicle == null) {
+         return obtainedVehicle.getBasePrice() - finalPrice;
+      }
+      return finalPrice-soldVehicle.getBasePrice();
    }
    
    /**
@@ -224,7 +235,7 @@ public class Transaction {
     * @return true if final price exceeds base price
     */
    public boolean wasProfitable(){
-      return finalPrice>vehicle.getBasePrice();
+      return determineProfitMade() > 0;
    }
    
    /**
@@ -233,7 +244,8 @@ public class Transaction {
     * @return transaction information as a string
     */
    public String toString(){
-      return "Customer Name: "+ customerName+
+      String temp = "";
+      temp += "Customer Name: "+ customerName+
          "\nCustomer ID: "+customerID+
          "\nFinal Price: "+finalPrice+
          "\nIs TradeIn: "+isTradeIn+
@@ -242,8 +254,10 @@ public class Transaction {
          "\nIs Lease: "+isLease+
          "\nMonth: "+ month+
          "\nDate: "+ date+
-         "\nYear: "+ year+
-         vehicle.displayEssentials();
+         "\nYear: "+ year;
+         if(soldVehicle != null) temp += "\nVehicle Sold: " + soldVehicle.displayEssentials();
+         if(soldVehicle != null) temp += "\nVehicle Obtained: " + obtainedVehicle.displayEssentials();
+      return temp + "\n";
    }
    
 
