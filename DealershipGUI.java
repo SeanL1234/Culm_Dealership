@@ -147,8 +147,7 @@ public class DealershipGUI extends JFrame {
 
                 dealership.sortVehicleByYear();
 
-                txtOutput.setText(
-                        "Inventory sorted by year.");
+                txtOutput.setText("Inventory sorted by year.\n\n"+dealership.displayInventory());
 
                 break;
         
@@ -196,8 +195,7 @@ public class DealershipGUI extends JFrame {
 
                 dealership.sortVehicleByManufacturer();
 
-                txtOutput.setText(
-                        "Inventory sorted by manufacturer.");
+            txtOutput.setText("Inventory sorted by manufacturer.\n\n"+dealership.displayInventory());
 
                 break;
 
@@ -532,8 +530,7 @@ public class DealershipGUI extends JFrame {
 
                 dealership.sortCustomersByLNID();
 
-                txtOutput.setText(
-                        "Customers sorted.");
+            txtOutput.setText("Customers sorted.\n\n"+dealership.displayAllCustomerInfo());
 
                 break;
 
@@ -541,8 +538,7 @@ public class DealershipGUI extends JFrame {
 
                 dealership.sortCustomerLNLPID();
 
-                txtOutput.setText(
-                        "Customers sorted.");
+            txtOutput.setText("Customers sorted.\n\n"+dealership.displayAllCustomerInfo());
 
                 break;
         }
@@ -654,8 +650,7 @@ public class DealershipGUI extends JFrame {
 
                 dealership.sortTransactionsByDate();
 
-                txtOutput.setText(
-                        "Transactions sorted.");
+            txtOutput.setText("Transactions sorted.\n\n"+dealership.displayTransactionHistory());
 
                 break;
                 }
