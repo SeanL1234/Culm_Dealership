@@ -571,7 +571,7 @@ public class DealershipSystem {
                 Vehicle carSold = null;
                 String temp = read.readLine();
                 if(!temp.equals("null")) {
-                    String brandName = check;
+                    String brandName = temp;
                     String modelName = read.readLine();
                     int carYear = Integer.parseInt(read.readLine());
                     int basePrice = Integer.parseInt(read.readLine());
@@ -869,7 +869,7 @@ public class DealershipSystem {
      * @param vehicle the vehicle involved (required for buyer, may be null for seller)
      * @return calculated price as double or -1 on error
      */
-    public int createDealPrice(String type, Account acc, Vehicle vehicle) {
+    public int createDealPrice(String type, boolean isLoyal, Account acc, Vehicle vehicle) {
         String t = type.toLowerCase();
         int base = -1;
         if (t.equals("buyer")) {
@@ -884,6 +884,7 @@ public class DealershipSystem {
             return base;
         }
         // multiplier between 1.0 and 1.5
+        if(isLoyal) base *= Customer.getLoyalMultiplier();
         double mult = 1.0 + Math.random() * 0.5;
         return (int)(base * mult);
     }

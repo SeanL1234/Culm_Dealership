@@ -17,10 +17,7 @@ public class Customer{
     public static int RANGE = 10; 
 
     // Constant for multiplier used in deal price calculation for loyal customers
-    public static int LOYAL_MULTIPLIER = 15; 
-
-    // Constant for multiplier used in deal price calculation for new customers
-    public static int NEW_MULTIPLIER = 10; 
+    public static double LOYAL_MULTIPLIER = 0.8 ; 
 
     private int bargainingRange;
     private int loyaltyPoint;
@@ -72,6 +69,10 @@ public class Customer{
         } else {
             return 0;
         }
+    }
+
+    public static double getLoyalMultiplier() {
+        return LOYAL_MULTIPLIER;
     }
 
     /**
@@ -248,21 +249,6 @@ public class Customer{
         } else {
             Customer other = (Customer) obj;
             return this.id.equals(other.id);
-        }
-    }
-
-     /**
-     * Generates a randomized deal price for the customer based on loyalty status.
-     * Loyal customers receive a deal based on the range and multiplier.
-     * New customers receive a deal based on the range and new multiplier.
-     *
-     * @return a randomized deal price
-     */
-    public int getRandomizedDealPrice(){
-        if (isLoyal()) {
-            return (int) (Math.random() * RANGE * LOYAL_MULTIPLIER);
-        } else {
-            return (int) (Math.random() * RANGE * NEW_MULTIPLIER);
         }
     }
 

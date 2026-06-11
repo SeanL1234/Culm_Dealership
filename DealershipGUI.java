@@ -891,11 +891,11 @@ public class DealershipGUI extends JFrame {
                                 } else {
                                         if(dealership.validateAccount("Seller", sellID)) {
                                                 if(dealership.withinDealerRange(sellAcc.getOwnedVehicle(), sellAcc)) {
-                                                     int dealPrice = dealership.createDealPrice("seller", sellAcc, null);
+                                                     int dealPrice = dealership.createDealPrice("seller", sellCus.isLoyal(), sellAcc, null);
                                                         if(sellAcc.sellVehicle(dealPrice)) {
                                                                 JOptionPane.showMessageDialog(this, "Transaction complete!\nVehicle sold for: $" + dealPrice, "Success!", JOptionPane.INFORMATION_MESSAGE);
                                                         }
-                                                        Transaction transaction = new Transaction(sellCus.getName(), sellID, dealPrice, false, false, true, false, 6, 9, 2026, sellAcc.getOwnedVehicle(), null);
+                                                        Transaction transaction = new Transaction(sellCus.getName(), sellID, dealPrice, false, false, true, false, 6, 11, 2026, sellAcc.getOwnedVehicle(), null);
                                                         dealership.updateTransactionHistory(transaction);
                                                         sellCus.updateTransactionHistory(transaction);   
                                                 } else {
@@ -933,11 +933,11 @@ public class DealershipGUI extends JFrame {
                                                         break;
                                                 }
                                                 Vehicle buying = vehicles[option-1];
-                                                int dealPrice = dealership.createDealPrice("buyer", buyAcc, buying);
+                                                int dealPrice = dealership.createDealPrice("buyer", buyCus.isLoyal(), buyAcc, buying);
                                                 if(buyAcc.buyVehicle(dealPrice)) {
                                                         JOptionPane.showMessageDialog(this, "Transaction complete!\nVehicle sold for: $" + dealPrice, "Success!", JOptionPane.INFORMATION_MESSAGE);
                                                 } 
-                                                Transaction transaction = new Transaction(buyCus.getName(), buyID, dealPrice, false, true, false, false, 0, 0, 0, null, buying);
+                                                Transaction transaction = new Transaction(buyCus.getName(), buyID, dealPrice, false, true, false, false, 6, 11, 2026, null, buying);
                                                 dealership.updateTransactionHistory(transaction);
                                                 buyCus.updateTransactionHistory(transaction);
                                                 buyAcc.updateBudget(buyAcc.getBudget() - dealPrice);
@@ -976,7 +976,7 @@ public class DealershipGUI extends JFrame {
                                                 if(tradeAcc.tradeVehicle(tradingFor)) {
                                                         JOptionPane.showMessageDialog(this, "Transaction complete!\nVehicle traded!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                                                 } 
-                                                Transaction transaction = new Transaction(tradeCus.getName(), tradeID, -1, true, false, false, false, 0, 0, 0, tradeAcc.getVehicleForTrading(), tradingFor);
+                                                Transaction transaction = new Transaction(tradeCus.getName(), tradeID, -1, true, false, false, false, 6, 11, 2026, tradeAcc.getVehicleForTrading(), tradingFor);
                                                 dealership.updateTransactionHistory(transaction);
                                                 tradeCus.updateTransactionHistory(transaction);
                                         } else {

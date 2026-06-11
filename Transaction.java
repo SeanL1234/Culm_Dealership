@@ -256,7 +256,7 @@ public class Transaction {
          "\nDate: "+ date+
          "\nYear: "+ year;
          if(soldVehicle != null) temp += "\nVehicle Sold: " + soldVehicle.displayEssentials();
-         if(soldVehicle != null) temp += "\nVehicle Obtained: " + obtainedVehicle.displayEssentials();
+         if(obtainedVehicle != null) temp += "\nVehicle Obtained: " + obtainedVehicle.displayEssentials();
       return temp + "\n";
    }
    
