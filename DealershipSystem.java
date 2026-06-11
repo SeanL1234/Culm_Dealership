@@ -1948,7 +1948,7 @@ public class DealershipSystem {
     public String displayAllCustomerInfo() {
         String string = "";
         for (int i = 0; i < numCustomer; i++) {
-            if (customers[i] != null) string += customers[i].toString() + "\n";
+            if (customers[i] != null) string += customers[i].toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
         }
         return string;
     }
@@ -1994,7 +1994,7 @@ public class DealershipSystem {
     public String displayTransactionHistory() {
         String string = "";
         for (int i = 0; i < numTransactions; i++) {
-            if (transactionHistory[i] != null) string += transactionHistory[i].toString() + "\n";
+            if (transactionHistory[i] != null) string += transactionHistory[i].toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
         }
         return string;
     }

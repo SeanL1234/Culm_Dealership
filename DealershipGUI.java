@@ -690,11 +690,11 @@ public class DealershipGUI extends JFrame {
 
                 int month =
                         Integer.parseInt(
-                                JOptionPane.showInputDialog("Month"));
+                                JOptionPane.showInputDialog("Month (in numbers)"));
 
                 int year =
                         Integer.parseInt(
-                                JOptionPane.showInputDialog("Year"));
+                                JOptionPane.showInputDialog("Year (in numbers)"));
 
                 double monthly =
                         dealership.getMonthlySalary(
