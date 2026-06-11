@@ -763,11 +763,14 @@ public class DealershipSystem {
     public Customer[] searchCustomerByLastName(String lastName) {
         int count = searchLNHelper(lastName);
         Customer[] result = new Customer[count];
+
+        if (result.length == 0) return null;
+        
         int idx = 0;
         for (int i = 0; i < customers.length; i++) {
             String[] parts = customers[i].getName().split(" ");
             String ln = parts[parts.length - 1];
-            if (ln.equals(lastName)) {
+            if (ln.equalsIgnoreCase(lastName)) {
                 result[idx] = customers[i];
                 idx++;
             }
@@ -786,7 +789,7 @@ public class DealershipSystem {
         for (int i = 0; i < customers.length; i++) {
             String[] parts = customers[i].getName().split(" ");
             String ln = parts[parts.length - 1];
-            if (ln.equals(lastName)) {
+            if (ln.equalsIgnoreCase(lastName)) {
                 counter++;
             }
         }
@@ -1976,14 +1979,14 @@ public class DealershipSystem {
     /**
      * Display all vehicles from a given manufacturer.
      */
-    public String displayAllManufacturer(String manufacturer) {
-        String string = "";
-        for (int i = 0; i < numCars; i++) {
-            Vehicle v = vehicles[i];
-            if (v != null && manufacturer.equals(v.getModelBrand())) string += v.toString() + "\n";
-        }
-        return string;
-    }
+    // public String displayAllManufacturer(String manufacturer) {
+    //     String string = "";
+    //     for (int i = 0; i < numCars; i++) {
+    //         Vehicle v = vehicles[i];
+    //         if (v != null && manufacturer.equals(v.getModelBrand())) string += v.toString() + "\n";
+    //     }
+    //     return string;
+    // }
 
     /**
      * Display full transaction history.

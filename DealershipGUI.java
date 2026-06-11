@@ -330,6 +330,10 @@ public class DealershipGUI extends JFrame {
 
                 Customer[] customers =
                         dealership.searchCustomerByLastName(ln);
+                
+                if (customers == null || customers.length == 0) {
+                        txtOutput.setText("No customers found with last name: " + ln);
+                } else {
 
                 StringBuilder sb =
                         new StringBuilder();
@@ -339,6 +343,7 @@ public class DealershipGUI extends JFrame {
                             .append("\n\n");
 
                 txtOutput.setText(sb.toString());
+        }
 
                 break;
 
@@ -554,7 +559,8 @@ public class DealershipGUI extends JFrame {
                 "Search By Customer ID",
                 "Search By Date",
                 "Search By Month",
-                "Search By Year"
+                "Search By Year",
+                "Sort Transactions By Date",
         };
 
         String choice = (String) JOptionPane.showInputDialog(
@@ -583,12 +589,14 @@ public class DealershipGUI extends JFrame {
                         JOptionPane.showInputDialog(
                                 "Customer ID");
 
-                Transaction[] t =
-                        dealership.searchCustomerByID(id).getCustomerTransactionHistory();
-
-                
+                Customer temp = dealership.searchCustomerByID(id);
+                        
+                if (temp == null) {
+                        txtOutput.setText("Customer not found.");
+                } else {
+                        Transaction[] t = temp.getCustomerTransactionHistory();
                         displayTransactions(t);
-
+                }
                 break;
 
             case "Search By Date":
@@ -641,7 +649,16 @@ public class DealershipGUI extends JFrame {
                                 yr));
 
                 break;
-        }
+
+        case "Sort Transactions By Date":
+
+                dealership.sortTransactionsByDate();
+
+                txtOutput.setText(
+                        "Transactions sorted.");
+
+                break;
+                }
     }
 
     /* ==================================================
@@ -653,7 +670,6 @@ public class DealershipGUI extends JFrame {
         String[] options = {
                 "Monthly Salary",
                 "Yearly Salary",
-                "Sort Transactions By Date"
         };
 
         String choice = (String) JOptionPane.showInputDialog(
@@ -704,14 +720,6 @@ public class DealershipGUI extends JFrame {
 
                 break;
 
-            case "Sort Transactions By Date":
-
-                dealership.sortTransactionsByDate();
-
-                txtOutput.setText(
-                        "Transactions sorted.");
-
-                break;
         }
     }
 

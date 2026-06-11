@@ -534,7 +534,7 @@ abstract class Vehicle {
     * @return formatted string containing essential vehicle details
     */
    public String displayEssentials(){
-      return "VIN: "+vin +
+      return "\nVIN: "+vin +
          "\nModel: "+ modelName +
          "\nBrand: "+ modelBrand +
          "\nYear: "+ year +

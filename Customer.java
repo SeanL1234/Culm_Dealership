@@ -220,6 +220,11 @@ public class Customer{
      */
     private String generateUID(){
         String[] nameArray = name.split(" ");
+        if (nameArray.length == 1){
+            nameArray = new String[2];
+            nameArray[0] = name;
+            nameArray[1] = name;
+        }
         String uid = "" + nameArray[0].charAt(0) + nameArray[1].charAt(0);
         return generateUID(uid, 0);
     }
