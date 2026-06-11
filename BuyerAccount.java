@@ -9,6 +9,7 @@
  * and vehicle specifications. It provides methods to validate purchases, find applicable vehicles,
  * and determine if a vehicle purchase is feasible based on the buyer's budget and preferences.
  */
+
 public class BuyerAccount extends Account {
     private int budget;
     private String typeCar;

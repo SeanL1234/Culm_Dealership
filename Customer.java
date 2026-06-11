@@ -8,14 +8,19 @@
  * including their accounts, transaction history, and loyalty status.
  */
 
-import java.io.*; // idk if i want this to stay 
-
 public class Customer{
     
-    public static int LOYAL_THRESHOLD = 5; // can change
-    public static int LOYAL_RANGE = 10; // can change
-    public static int LOYAL_MULTIPLIER = 10; // can change
-    public static int NEW_MULTIPLIER = 10; // can change
+    // Constant for loyalty program: the threshold to be considered loyal
+    public static int LOYAL_THRESHOLD = 5; 
+
+    // Constant for the range used in deal price calculation 
+    public static int RANGE = 10; 
+
+    // Constant for multiplier used in deal price calculation for loyal customers
+    public static int LOYAL_MULTIPLIER = 15; 
+
+    // Constant for multiplier used in deal price calculation for new customers
+    public static int NEW_MULTIPLIER = 10; 
 
     private int bargainingRange;
     private int loyaltyPoint;
@@ -23,8 +28,6 @@ public class Customer{
     private String id;
     private Account[] customerAccount;
     private Transaction[] customerTransactionHistory;
-
-
 
     /**
      * Constructs a Customer with the provided name, id, account list, and transaction history.
@@ -250,16 +253,16 @@ public class Customer{
 
      /**
      * Generates a randomized deal price for the customer based on loyalty status.
-     * Loyal customers receive a deal based on the loyal range and multiplier.
-     * New customers receive a deal based on the loyal range and new multiplier.
+     * Loyal customers receive a deal based on the range and multiplier.
+     * New customers receive a deal based on the range and new multiplier.
      *
      * @return a randomized deal price
      */
     public int getRandomizedDealPrice(){
         if (isLoyal()) {
-            return (int) (Math.random() * LOYAL_RANGE * LOYAL_MULTIPLIER);
+            return (int) (Math.random() * RANGE * LOYAL_MULTIPLIER);
         } else {
-            return (int) (Math.random() * LOYAL_RANGE * NEW_MULTIPLIER);
+            return (int) (Math.random() * RANGE * NEW_MULTIPLIER);
         }
     }
 

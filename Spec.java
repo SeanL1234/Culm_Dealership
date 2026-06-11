@@ -11,12 +11,12 @@
 
 public abstract class Spec {
 
-    public static int DEPRECIATE_AGE = 5;
-    public static int DEPRECIATE_AGE_BY_PRICE = 20; // can change
-    public static int DEPRECIATE_AGE_BY_RATE = 10; // can change
+    public static int DEPRECIATE_AGE = 10;
+    public static int DEPRECIATE_AGE_BY_PRICE = 20; 
+    public static int DEPRECIATE_AGE_BY_RATE = 10; 
     public static int DEPRECIATE_MILEAGE = 100000;
-    public static int DEPRECIATE_MILEAGE_BY_PRICE = 20; // can change
-    public static int DEPRECIATE_MILEAGE_BY_RATE = 10; // can change
+    public static int DEPRECIATE_MILEAGE_BY_PRICE = 20; 
+    public static int DEPRECIATE_MILEAGE_BY_RATE = 10; 
 
 
     private int mileage;

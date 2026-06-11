@@ -10,12 +10,25 @@
 
 public class HybridSpec extends Spec {
 
-    public static int DEPRECIATE_FUELEFF = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_PRICE = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_RATE = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME_BY_PRICE = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; // can change
+    // constants for depreciation factors specific to hybrid vehicles
+
+    // Constant indicating after what fuel effeiciency percentage does the depreciation start
+    public static int DEPRECIATE_FUELEFF = 10; 
+
+    // Constant indicating how much to depreciate based on fuel efficiency by price
+    public static int DEPRECIATE_FUELEFF_BY_PRICE = 10; 
+
+    // Constant indicating the rate of depreciate further based on fuel efficiency
+    public static int DEPRECIATE_FUELEFF_BY_RATE = 10; 
+
+    // Constant indicating after what charging time does the depreciation start
+    public static int DEPRECIATE_CHARGING_TIME = 10; 
+
+    // Constant indicating how much to depreciate based on charging time by price
+    public static int DEPRECIATE_CHARGING_TIME_BY_PRICE = 10; 
+
+    // Constant indicating the rate of depreciate further based on fuel efficiency
+    public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; 
 
     private int powerReturnRate;
     private int chargingTime;

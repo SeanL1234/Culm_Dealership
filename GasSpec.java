@@ -10,11 +10,15 @@
 
 public class GasSpec extends Spec {
 
-    public static int BIG_FUELCAP = 50; // can change
-    public static int BIG_FUELCAP_BY_PRICE = 20; //
-    public static int BIG_FUELCAP_BY_RATE = 10; // can change
-    public static int DEPRECIATE_FUELEFF = 10; // can change
-    public static int DEPRECIATE_FUELEFF_BY_PRICE = 20; // can change
+    // Constants for depreciation factors specific to gas vehicles
+
+    // Constant indicating after what fuel effeiciency percentage does the depreciation start
+    public static int DEPRECIATE_FUELEFF = 80; 
+
+    // Constant indicating how much to depreciate based on fuel efficiency by price
+    public static int DEPRECIATE_FUELEFF_BY_PRICE = 20; 
+
+    // Constant indicating the rate of depreciate further based on fuel efficiency
     public static int DEPRECIATE_FUELEFF_BY_RATE = 10; // can change
 
     private String engineType;

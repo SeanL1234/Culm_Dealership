@@ -71,7 +71,7 @@ public class DealershipSystem {
                 String name = read.readLine();
                 String id = read.readLine();
                 int loyal = Integer.parseInt(read.readLine());
-                read.readLine(); // skip legacy seller marker
+                read.readLine(); // text indicating a seller account
                 String stat = read.readLine();
                 SellerAccount sellerAcc = null;
                 if(!stat.equals("null")) {
@@ -138,7 +138,7 @@ public class DealershipSystem {
                     double rangeOfAccept = Double.parseDouble(read.readLine());
                     sellerAcc = new SellerAccount(org, fam, offered, rating, car, rangeOfAccept);
                 }
-                read.readLine(); // skip legacy buyer marker
+                read.readLine(); // text indicating a buyer account
                 stat = read.readLine();
                 BuyerAccount buyerAcc = null;
                 if(!stat.equals("null")) {
@@ -181,7 +181,7 @@ public class DealershipSystem {
                     double rangeOfAccept = Double.parseDouble(read.readLine());
                     buyerAcc = new BuyerAccount(isOrganization, isFamily, budget, typeCar, expectation, percentMatch, rangeOfAccept);
                 }
-                read.readLine(); // skip legacy trade marker
+                read.readLine(); // text indicating a trade-in account
                 stat = read.readLine();
                 TradeInAccount tradeAcc = null;
                 if(!stat.equals("null")) {
@@ -703,23 +703,6 @@ public class DealershipSystem {
         }
         return null;
     }
-
-    // /**
-    //  * Search the inventory for a vehicle whose spec exactly equals the provided expectation
-    //  * (100% match).
-    //  * @param expectation the Spec to search for
-    //  * @return the first matching Vehicle or null if none found
-    //  */
-
-    // public Vehicle searchVehicleBySpec(Spec expectation) {
-    //     for (int i = 0; i < vehicles.length; i++) {
-    //         if (vehicles[i].getVehicleSpec().equals(expectation, 100.0)) {
-    //             return vehicles[i];
-    //         }
-    //     }
-    //     return null;
-    // }
-
     /**
      * Search the inventory for a vehicle whose spec matches the provided expectation
      * by at least percentMatch.

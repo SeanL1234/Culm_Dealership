@@ -9,12 +9,16 @@
 
 public class ElectricSpec extends Spec {
 
-    public static int BIG_FUELCAP = 50; // can change
-    public static int BIG_FUELCAP_BY_PRICE = 20; //
-    public static int BIG_FUELCAP_BY_RATE = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME_BY_VALUE = 10; // can change
-    public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; // can change
+    // Constants for depreciation factors specific to electric vehicles
+
+    // Constant indicating after what charging time percentage does the depreciation start
+    public static int DEPRECIATE_CHARGING_TIME = 80; 
+
+    // Constant indicating how much to depreciate based on charging time by price
+    public static int DEPRECIATE_CHARGING_TIME_BY_VALUE = 10; 
+
+    // Constant indicating the rate of depreciate further based on charging time
+    public static int DEPRECIATE_CHARGING_TIME_BY_RATE = 10; 
 
     private double batteryHealthPercentage;
     private int chargingTime;
@@ -64,9 +68,7 @@ public class ElectricSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        // if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
-        //     temp += DEPRECIATE_FUELEFF_BY_RATE;
-        // }
+        // [TODO] electric spec that should be added here
 
         if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
@@ -89,9 +91,8 @@ public class ElectricSpec extends Spec {
     public int calculateExpectedPrice(int basePrice) {
         int temp = 0;
                 
-        // if (getFuelEfficiency() < DEPRECIATE_FUELEFF) {
-        //     temp += DEPRECIATE_FUELEFF_BY_PRICE;
-        // }
+        // [TODO] electric spec that should be added here
+
 
         if (getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
@@ -121,20 +122,7 @@ public class ElectricSpec extends Spec {
             int matchCount = 0;
             int totalCount = 0;
 
-            // if (this.engineType.equals(gasSpec.engineType)) {
-            //     matchCount++;
-            // }
-            // totalCount++;
-
-            // if (this.getFuelCapacity() >= gasSpec.getFuelCapacity()) {
-            //     matchCount++;
-            // }
-            // totalCount++;
-
-            // if (this.getFuelEfficiency() >= gasSpec.getFuelEfficiency()) {
-            //     matchCount++;
-            // }
-            // totalCount++;
+            // [TODO] electric spec that should be added here
 
             if (this.getAge() <= gasSpec.getAge()) {
                 matchCount++;
