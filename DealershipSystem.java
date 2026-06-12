@@ -647,26 +647,6 @@ public class DealershipSystem {
         }
     }
 
-    // public Transaction acceptDeal(Customer customer, Account acc) {
-    //     if(acc == null) {
-    //         return null;
-    //     } else if(!acc.validate(vehicles)) {
-    //         return null;
-    //     } else {
-    //         int suggestedPrice = customer.getRandomizedDealPrice();
-    //         if(acc instanceof SellerAccount) {
-    //             if(((SellerAccount)acc).sellVehicle(suggestedPrice)) {
-    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, false, true, false, 0, 0, 0, ((SellerAccount)acc).getOwnedVehicle());
-    //             }
-    //         } else if(acc instanceof BuyerAccount) {
-    //             if(((BuyerAccount)acc).buyVehicle(suggestedPrice)) {
-    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, true, false, false, 0, 0, 0, ((BuyerAccount)acc).());
-    //             }
-    //         }
-    //         return null;
-    //     }
-    // }
-
     /**
      * Attempt to accept a deal between the given customer and account using internal validation.
      * If the account validates against the current inventory it will attempt the appropriate

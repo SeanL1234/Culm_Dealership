@@ -108,11 +108,15 @@ public class HybridSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        if (getAge() >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
-        if (getMileage() >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
+        }
+
+        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+            temp += DEPRECIATE_FUELEFF_BY_RATE;
         }
 
         return temp;
@@ -132,12 +136,16 @@ public class HybridSpec extends Spec {
             }
         }
 
-        if (getAge() >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
         if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
+        }
+
+        if (fuelEfficiency < DEPRECIATE_FUELEFF) {
+            temp += DEPRECIATE_FUELEFF_BY_RATE;
         }
 
         return temp;
@@ -160,10 +168,10 @@ public class HybridSpec extends Spec {
             temp += DEPRECIATE_CHARGING_TIME_BY_PRICE;
         }
 
-        if (getAge() >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
-        if (getMileage() >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_PRICE;
         }
 
@@ -202,12 +210,12 @@ public class HybridSpec extends Spec {
             }
             totalCount++;
 
-            if (this.getAge() <= hybridSpec.getAge()) {
+            if (super.getAge() <= hybridSpec.getAge()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.getMileage() <= hybridSpec.getMileage()) {
+            if (super.getMileage() <= hybridSpec.getMileage()) {
                 matchCount++;
             }
             totalCount++;
