@@ -155,7 +155,9 @@ public class GasSpec extends Spec {
      * @return true if the specs match by the given percentage, false otherwise
      */
     public boolean equals(Object spec, double percentMatch) {
-        if (spec == null || !(spec instanceof GasSpec)) {
+        if(percentMatch == 0) {
+            return true;
+        } else if (spec == null || !(spec instanceof GasSpec)) {
             return false;
         } else {
             GasSpec gasSpec = (GasSpec) spec;

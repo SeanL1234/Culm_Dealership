@@ -113,7 +113,9 @@ public class ElectricSpec extends Spec {
      */
     @Override
     public boolean equals(Object spec, double percentMatch) {
-        if (spec == null || !(spec instanceof GasSpec)) {
+        if(percentMatch == 0) {
+            return true;
+        } else if (spec == null || !(spec instanceof ElectricSpec)) {
             return false;
         } else if (spec == this) {
             return true;

@@ -141,7 +141,9 @@ public class DealershipGUI extends JFrame {
                 "Search Spec",
                 "Sort By Year",
                 "Sort By Manufacturer",
-                "Remove Vehicle"
+                "Remove Vehicle",
+                "See Depreciated Value",
+                "See Cheap Vehicles"
         };
 
         // Display action selection dialog
@@ -382,6 +384,21 @@ public class DealershipGUI extends JFrame {
                 }
 
                 break;
+
+                case "See Depreciated Value":
+                        try {
+                                int year = Integer.parseInt(JOptionPane.showInputDialog("Years Passed: "));
+                                String VIN = JOptionPane.showInputDialog("Vehicle VIN: ");
+                                Vehicle car = dealership.searchVehicleByVIN(VIN);
+                                Spec carSpec = dealership.searchVehicleByVIN(VIN).getVehicleSpec();
+                                JOptionPane.showMessageDialog(this, "The depreciated value after " + year + "years is:\n$" + carSpec.calculateValueAfterYear(car.getBasePrice(), year));
+                        } catch (NumberFormatException nfe) {
+                                JOptionPane.showMessageDialog(this, "Error! Enter a proper year value!", "Input Error!", JOptionPane.WARNING_MESSAGE);
+                        }
+                        break;
+
+                case "See Cheap Vehicles":
+                        txtOutput.setText(dealership.displayCheapVehicles());
         }
     }
 
@@ -1352,7 +1369,7 @@ private void openDealsMenu() {
 
                                                     JOptionPane.showMessageDialog(
                                                             this,
-                                                            "Transaction complete!\nVehicle sold for: $" + dealPrice,
+                                                            "Transaction complete!\nVehicle sold for: $" + dealPrice + "\nCustomer Name: " + sellCus.getName() + "\nVehicle Sold: " + sellAcc.getOwnedVehicle(),
                                                             "Success!",
                                                             JOptionPane.INFORMATION_MESSAGE);
                                             }

@@ -2031,4 +2031,34 @@ public class DealershipSystem {
         }
         
     }
+
+    public Vehicle[] showAllCheapVehicles() {
+        Vehicle[] cheaps = new Vehicle[cheapVehicleCountHelper()];
+        int idx = 0;
+        for(int i = 0; i < vehicles.length; i++) {
+            if(vehicles[i].isCheap()) {
+                cheaps[idx] = vehicles[i];
+                idx++;
+            }
+        }
+        return cheaps;
+    }
+
+    private int cheapVehicleCountHelper() {
+        int count = 0;
+        for(int i = 0; i < vehicles.length; i++){
+            if(vehicles[i].isCheap()) count++;
+        }
+        return count;
+    }
+
+    public String displayCheapVehicles() {
+        Vehicle[] cheaps = showAllCheapVehicles();
+        String string = "";
+        if(cheaps.length == 0) return "No Cheap Vehicles";
+        for (int i = 0; i < cheaps.length; i++) {
+            string += vehicles[i].toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+        }
+        return string;
+    }
 }

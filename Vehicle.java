@@ -578,6 +578,7 @@ abstract class Vehicle {
          "\nColor:"+color+
          "\nMaintenance Period: "+ maintenancePeriod+
          "\nRange: "+range+
+         "\nExpected Price: $" + vehicleSpec.calculateExpectedPrice(basePrice) +
          "\n\nVehicle Spec: \n"+vehicleSpec;
    
    }

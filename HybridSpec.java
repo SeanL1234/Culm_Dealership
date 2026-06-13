@@ -178,7 +178,9 @@ public class HybridSpec extends Spec {
      */
     @Override
     public boolean equals(Object spec, double percentMatch) {
-        if (spec == null || !(spec instanceof HybridSpec)) {
+        if(percentMatch == 0) {
+            return true;
+        } else if (spec == null || !(spec instanceof HybridSpec)) {
             return false;
         } else if (spec == this) {
             return true;

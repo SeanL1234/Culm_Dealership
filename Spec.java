@@ -153,7 +153,7 @@ public abstract class Spec {
         return calculateValueAfterYear(year, depreciationRate, price);
     }
 
-    public int calculateValueAfterYear(int year, int depreciationRate, int price){
+    private int calculateValueAfterYear(int year, int depreciationRate, int price){
         if (year > 0){
             return price; 
         } else {
