@@ -1940,7 +1940,7 @@ public class DealershipSystem {
         String string = "";
         for (int i = 0; i < numCustomer; i++) {
             Customer c = customers[i];
-            if (c != null && c.isLoyal()) string += c.toString() + "\n";
+            if (c != null && c.isLoyal()) string += c.toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
         }
         return string;
     }
