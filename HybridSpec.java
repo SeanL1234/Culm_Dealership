@@ -101,8 +101,9 @@ public class HybridSpec extends Spec {
     }
 
     /**
-     * Calculates the yearly depreciation rate based on age and mileage.
-     * @return the yearly depreciation rate
+     * Calculates the yearly depreciation rate from age, mileage, and low fuel efficiency.
+     * Does not consider rechargeable status or charging time (see overloaded version).
+     * @return total yearly depreciation rate percentage
      */
     @Override
     public int calculateYearlyDepreciationRate() {
@@ -123,7 +124,8 @@ public class HybridSpec extends Spec {
     }
 
     /**
-     * Calculates the yearly depreciation rate based on rechargeable status, age, and mileage.
+     * Calculates the yearly depreciation rate based on rechargeable status,
+     * charging time, age, mileage, and low fuel efficiency.
      * @param isRechargeable indicates if the hybrid vehicle is rechargeable
      * @return the yearly depreciation rate
      */
@@ -152,9 +154,11 @@ public class HybridSpec extends Spec {
     }
 
     /**
-     * Calculates the expected price based on depreciation factors.
-     * @param basePrice the base price of the vehicle
-     * @return the expected price after depreciation
+     * Calculates expected price by subtracting depreciation amounts when fuel efficiency
+     * is below threshold, charging time is high, or age/mileage exceed thresholds.
+     *
+     * @param basePrice original vehicle base price
+     * @return expected price after depreciation deductions
      */
     @Override
     public int calculateExpectedPrice(int basePrice) {

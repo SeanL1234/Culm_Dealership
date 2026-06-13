@@ -36,13 +36,6 @@ public class GasVehicle extends Vehicle{
    public GasSpec getGasSpec(){
       return gasSpec;
    }
-      /**
-       * Set the maximum horsepower.
-       * @param maxHorsePower horsepower value
-       */
-
-   // Mutators
-
    /** @param maxHorsePower maximum horsepower */
    public void setMaxHorsePower(int maxHorsePower){
       if(maxHorsePower>0){
@@ -54,10 +47,6 @@ public class GasVehicle extends Vehicle{
    public void setGasSpec(GasSpec gasSpec){
       this.gasSpec = gasSpec;
    }
-      /**
-       * Calculate maintenance fee for a gas vehicle.
-       * @return maintenance fee
-       */
 
    /**
     * Constructs a GasVehicle object with general vehicle
@@ -108,6 +97,13 @@ public class GasVehicle extends Vehicle{
          "Max Horse Power: "+maxHorsePower + "\n";
    }
 
+   /**
+    * Compares this gas vehicle to another, including superclass fields,
+    * max horsepower, and gas spec (100% match).
+    *
+    * @param obj object to compare
+    * @return true if all fields are equal
+    */
    @Override
    public boolean equals(Object obj) {
       if (obj == null) return false;

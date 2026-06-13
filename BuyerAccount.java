@@ -25,6 +25,7 @@ public class BuyerAccount extends Account {
      * @param typeCar the preferred type of car the buyer wants
      * @param expectation the Spec object containing the buyer's vehicle specifications
      * @param percentMatch the percentage match required for a vehicle to be considered applicable
+     * @param rangeOfAccept price buffer subtracted from budget for auto-approval
      */
     public BuyerAccount(boolean isOrgaization, boolean isFamily, int budget, String typeCar, Spec expectation, double percentMatch, double rangeOfAccept) {
         super(isOrgaization, isFamily);
@@ -68,8 +69,10 @@ public class BuyerAccount extends Account {
     }
 
     /**
-     * Returns the acceptable range of price deviation from the budget.
-     * @return double representing the range of acceptance
+     * Returns the price buffer subtracted from budget when auto-approving purchases.
+     * Purchases at or below {@code budget - rangeOfAccept} are always accepted.
+     *
+     * @return range-of-accept value in dollars
      */
     public double getRangeOfAccept() {
         return rangeOfAccept;
@@ -100,8 +103,8 @@ public class BuyerAccount extends Account {
     }
 
     /**
-     * Updates the acceptable price range deviation.
-     * @param newRange the new range of acceptance value
+     * Updates the price buffer subtracted from budget when auto-approving purchases.
+     * @param newRange the new range-of-accept value
      */
     public void changeRangeOfAccept(double newRange) {
         rangeOfAccept = newRange;

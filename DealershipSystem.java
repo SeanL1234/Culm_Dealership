@@ -639,6 +639,14 @@ public class DealershipSystem {
         }
     }
 
+    /**
+     * Checks whether a seller's offered price is within the dealership's acceptable range.
+     * Only applies to {@link SellerAccount}; returns false for other account types.
+     *
+     * @param vehicle the vehicle being evaluated (its base price sets the ceiling)
+     * @param acc the seller account
+     * @return true if offered price &lt;= vehicle base price + {@code DEAL_RANGE}
+     */
     public boolean withinDealerRange(Vehicle vehicle, Account acc) {
         if(acc instanceof SellerAccount) {
             return ((SellerAccount)acc).getOfferedPrice() <= vehicle.getBasePrice() + DEAL_RANGE;
@@ -648,14 +656,15 @@ public class DealershipSystem {
     }
 
     /**
-     * Attempt to accept a deal between the given customer and account using internal validation.
-     * If the account validates against the current inventory it will attempt the appropriate
-     * buy/sell action and return whether the deal was accepted.
-     * @param customer the customer involved in the deal
-     * @param acc the account used to perform the deal (SellerAccount or BuyerAccount)
-     * @return true if the deal was accepted, false otherwise
+     * Attempts a trade-in deal for the given customer using a {@link TradeInAccount}.
+     * Validates the account against current inventory, then delegates to
+     * {@link TradeInAccount#tradeVehicle(Vehicle)}.
+     *
+     * @param customer the customer performing the trade (unused by current implementation)
+     * @param acc the trade-in account; must be a {@link TradeInAccount}
+     * @param vehicle the dealership vehicle the customer wants to trade for
+     * @return true if the trade is accepted, false otherwise
      */
-
     public boolean acceptDeal(Customer customer, Account acc, Vehicle vehicle) {
         if(acc == null) {
             return false;
@@ -667,14 +676,11 @@ public class DealershipSystem {
     }
 
     /**
-     * Attempt to accept a trade-in deal for the given customer account against a specific vehicle.
-     * This method expects a TradeInAccount and delegates to its trade logic.
-     * @param customer the customer performing the trade
-     * @param acc the TradeInAccount used for the trade
-     * @param vehicle the vehicle to trade for
-     * @return true if the trade was accepted, false otherwise
+     * Searches inventory for a vehicle with the given VIN.
+     *
+     * @param VIN the vehicle identification number to look up
+     * @return the matching {@link Vehicle}, or null if not found
      */
-
     public Vehicle searchVehicleByVIN(String VIN) {
         for (int i = 0; i < vehicles.length; i++) {
             if (vehicles[i].getVin().equals(VIN)) {
@@ -684,13 +690,13 @@ public class DealershipSystem {
         return null;
     }
     /**
-     * Search the inventory for a vehicle whose spec matches the provided expectation
-     * by at least percentMatch.
-     * @param expectation the Spec to match
-     * @param percentMatch minimum percent match (0-100)
-     * @return the first matching Vehicle or null if none found
+     * Returns all inventory vehicles whose spec matches the expectation
+     * at or above the given percent threshold.
+     *
+     * @param expectation the {@link Spec} to match against
+     * @param percentMatch minimum match percentage (0–100)
+     * @return array of matching vehicles (may be empty, never null)
      */
-
     public Vehicle[] searchVehicleBySpec(Spec expectation, double percentMatch) {
         Vehicle[] matching = new Vehicle[numVehicleMatch(expectation, percentMatch)];
         int idx = 0;
@@ -704,10 +710,12 @@ public class DealershipSystem {
     }
 
     /**
-     * Return all vehicles that match the provided Spec by at least percentMatch.
-     * @param expectation spec to match
-     * @param percentMatch threshold 0-100
-     * @return array of matching vehicles (may be empty)
+     * Counts how many inventory vehicles match the given spec at or above
+     * the percent threshold.
+     *
+     * @param expectation the {@link Spec} to match against
+     * @param percentMatch minimum match percentage (0–100)
+     * @return number of matching vehicles
      */
     public int numVehicleMatch(Spec expectation, double percentMatch) {
         int count = 0;
@@ -735,11 +743,12 @@ public class DealershipSystem {
     }
 
     /**
-     * Return an array of Customers whose last name matches the provided lastName.
+     * Finds customers whose last name (final word of full name) matches,
+     * case-insensitive.
+     *
      * @param lastName last name to search for
-     * @return array of matching Customer objects (possibly empty)
+     * @return array of matching {@link Customer} objects, or null if none found
      */
-
     public Customer[] searchCustomerByLastName(String lastName) {
         int count = searchLNHelper(lastName);
         Customer[] result = new Customer[count];
@@ -812,8 +821,8 @@ public class DealershipSystem {
     }
 
     /**
-     * Return all transactions that reference the given vehicle.
-     * @param vehicle vehicle to search transactions for
+     * Return all transactions in which the given vehicle was sold by the dealership.
+     * @param vehicle sold vehicle to search transactions for
      * @return array of matching Transaction objects
      */
 
@@ -829,6 +838,12 @@ public class DealershipSystem {
         return result;
     }
 
+    /**
+     * Returns all transactions in which the given vehicle was obtained by the dealership.
+     *
+     * @param vehicle the obtained vehicle to search for
+     * @return array of matching {@link Transaction} objects (may be empty)
+     */
     public Transaction[] searchTransactionsByVehicleObtained(Vehicle vehicle) {
         int count = searchTNVehicleObtained(vehicle);
         Transaction[] result = new Transaction[count];
@@ -842,15 +857,17 @@ public class DealershipSystem {
     }
 
     /**
-     * Create a suggested deal price for a buyer or seller.
-     * If type equals "buyer", uses the provided vehicle's base price.
-     * If type equals "seller", uses the seller account's owned vehicle base price.
-     * Price is basePrice multiplied by a random factor in [1.0, 1.5].
-     * Returns -1 on invalid input.
-     * @param type either "buyer" or "seller"
-     * @param acc the Account performing the deal (may be SellerAccount/BuyerAccount/TradeInAccount)
-     * @param vehicle the vehicle involved (required for buyer, may be null for seller)
-     * @return calculated price as double or -1 on error
+     * Calculates a suggested deal price for a buyer or seller transaction.
+     * Buyer price starts from the selected vehicle's base price; seller price
+     * starts from the seller's offered price. Loyal customers receive the
+     * {@link Customer#getLoyalMultiplier()} discount before a random multiplier
+     * in [1.0, 1.5] is applied.
+     *
+     * @param type "buyer" or "seller" (case-insensitive)
+     * @param isLoyal whether the customer qualifies for the loyal discount
+     * @param acc the account involved ({@link SellerAccount} for seller deals)
+     * @param vehicle the vehicle being purchased (required for buyer; may be null for seller)
+     * @return calculated deal price as an integer, or -1 on invalid input
      */
     public int createDealPrice(String type, boolean isLoyal, Account acc, Vehicle vehicle) {
         String t = type.toLowerCase();
@@ -888,6 +905,12 @@ public class DealershipSystem {
         return counter;
     }
 
+    /**
+     * Counts transactions that reference the given obtained vehicle.
+     *
+     * @param vehicle the obtained vehicle to count
+     * @return number of matching transactions
+     */
     public int searchTNVehicleObtained(Vehicle vehicle) {
         int counter = 0;
         for (int i = 0; i < transactionHistory.length; i++) {
@@ -1114,6 +1137,13 @@ public class DealershipSystem {
         return result;
     }
 
+    /**
+     * Validates a customer's account of the given type against current inventory.
+     *
+     * @param type "Seller", "Buyer", or trade-in type string
+     * @param id customer ID
+     * @return true if the account passes its {@link Account#validate} check
+     */
     public boolean validateAccount(String type, String id) {
         if(type.equals("Seller")) {
             return searchCustomerByID(id).getSellerAccount().validate(vehicles);
@@ -1256,7 +1286,9 @@ public class DealershipSystem {
     }
 
     /**
-     * Save transaction history to a file in the same format as loadTransactionHistory.
+     * Saves transaction history to a file using the same format as {@link #loadTransactions}.
+     *
+     * @param transactionFileName destination file path
      */
     public void saveTransactionHistory(String transactionFileName) {
         try {
@@ -1852,8 +1884,11 @@ public class DealershipSystem {
     }
 
     /**
-     * Overloaded addCustomer that creates a simple Customer from a name.
-     * ID will be generated as "CU" + (numCustomer+1). Accounts and history are empty.
+     * Creates a new {@link Customer} from a name and adds it to the system.
+     * The customer ID is auto-generated by {@link Customer#Customer(String)}.
+     *
+     * @param name full customer name
+     * @return true if added, false if name is null or empty
      */
     public boolean addCustomer(String name) {
         if (name == null || name.isEmpty()) return false;
@@ -1862,6 +1897,12 @@ public class DealershipSystem {
         return addCustomer(c);
     }
 
+    /**
+     * Adds a vehicle to inventory, resizing the internal array if needed.
+     *
+     * @param vehicle the vehicle to add
+     * @return true if added, false if vehicle is null
+     */
     public boolean addVehicle(Vehicle vehicle) {
         if (vehicle == null) return false;
         if (vehicles == null) {
@@ -1932,7 +1973,11 @@ public class DealershipSystem {
     }
 
     /**
-     * Update a customer's loyalty points by name and id. If multiple match, updates first.
+     * Updates a customer's loyalty points by name and id. Updates the first matching customer.
+     *
+     * @param name customer full name
+     * @param id customer ID
+     * @param newLoyalty new loyalty point value
      */
     public void updateCustomerLoyalty(String name, String id, int newLoyalty) {
         if (customers == null) return;
@@ -1946,7 +1991,9 @@ public class DealershipSystem {
     }
 
     /**
-     * Display all customers' toString() to stdout.
+     * Builds a formatted string of all customers' {@link Customer#toString()} output.
+     *
+     * @return concatenated customer info with separator lines
      */
     public String displayAllCustomerInfo() {
         String string = "";
@@ -1957,7 +2004,9 @@ public class DealershipSystem {
     }
 
     /**
-     * Display all loyal customers' info.
+     * Builds a formatted string of all loyal customers' {@link Customer#toString()} output.
+     *
+     * @return concatenated loyal customer info with separator lines
      */
     public String displayAllLoyalCustomerInfo() {
         String string = "";
@@ -1969,7 +2018,9 @@ public class DealershipSystem {
     }
 
     /**
-     * Display all vehicles currently in inventory.
+     * Builds a formatted string of all vehicles currently in inventory.
+     *
+     * @return concatenated vehicle info with separator lines
      */
     public String displayInventory() {
         String string = "";
@@ -1980,7 +2031,9 @@ public class DealershipSystem {
     }
 
     /**
-     * Display full transaction history.
+     * Builds a formatted string of the full transaction history.
+     *
+     * @return concatenated transaction info with separator lines
      */
     public String displayTransactionHistory() {
         String string = "";
@@ -1991,10 +2044,14 @@ public class DealershipSystem {
     }
 
     /**
-     * Create an account for a customer identified by name and id. Prompts the user on the console
-     * for account-specific details then attaches the new account to the customer.
-     * accountType should be one of: "Seller", "Buyer", "TradeIn" (case-insensitive).
-     * @return true if account created and attached, false if customer not found or input error
+     * Attaches a pre-constructed account to the customer matching name and id.
+     * The GUI (or caller) is responsible for collecting account details.
+     *
+     * @param name customer full name
+     * @param id customer ID
+     * @param accountType "Seller", "Buyer", or trade-in label
+     * @param account the account object to attach
+     * @return true if the customer was found and the account was attached
      */
     public boolean createAccountForCustomer(String name, String id, String accountType, Account account) {
         if (name == null || id == null || accountType == null || account == null) return false;
@@ -2013,6 +2070,12 @@ public class DealershipSystem {
         return true;
     }
 
+    /**
+     * Returns inventory vehicles applicable to a buyer or trade-in account.
+     *
+     * @param acc a {@link BuyerAccount} or {@link TradeInAccount}
+     * @return matching vehicles, or null if none qualify
+     */
     public Vehicle[] showAllApplicableForCustomer(Account acc) {
         if(acc instanceof BuyerAccount) {
             return ((BuyerAccount)acc).showAllApplicableVehicles(vehicles);
@@ -2022,6 +2085,11 @@ public class DealershipSystem {
         
     }
 
+    /**
+     * Returns all inventory vehicles classified as cheap via {@link Vehicle#isCheap()}.
+     *
+     * @return array of cheap vehicles (may be empty)
+     */
     public Vehicle[] showAllCheapVehicles() {
         Vehicle[] cheaps = new Vehicle[cheapVehicleCountHelper()];
         int idx = 0;
@@ -2042,6 +2110,11 @@ public class DealershipSystem {
         return count;
     }
 
+    /**
+     * Builds a formatted string listing all cheap vehicles in inventory.
+     *
+     * @return vehicle details separated by dividers, or "No Cheap Vehicles"
+     */
     public String displayCheapVehicles() {
         Vehicle[] cheaps = showAllCheapVehicles();
         String string = "";

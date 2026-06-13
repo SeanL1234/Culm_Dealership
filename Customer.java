@@ -27,11 +27,13 @@ public class Customer{
     private Transaction[] customerTransactionHistory;
 
     /**
-     * Constructs a Customer with the provided name, id, account list, and transaction history.
+     * Constructs a Customer with the provided loyalty points, name, id,
+     * accounts, and transaction history.
      *
+     * @param loyaltyPoint initial loyalty points
      * @param name the customer's name
      * @param id the customer's identifier
-     * @param customerAccount the customer's accounts
+     * @param customerAccount the customer's accounts (seller, buyer, trade-in)
      * @param customerTransactionHistory the customer's transaction history
      */
     public Customer(int loyaltyPoint, String name, String id, Account[] customerAccount, Transaction[] customerTransactionHistory) {
@@ -71,6 +73,10 @@ public class Customer{
         }
     }
 
+    /**
+     * Returns the loyal-customer price multiplier constant.
+     * @return loyal multiplier ({@link #LOYAL_MULTIPLIER})
+     */
     public static double getLoyalMultiplier() {
         return LOYAL_MULTIPLIER;
     }
@@ -205,6 +211,11 @@ public class Customer{
         this.customerTransactionHistory = customerTransactionHistory;
     }
 
+    /**
+     * Appends a transaction to this customer's history, resizing the array.
+     *
+     * @param transaction the transaction to add
+     */
     public void updateTransactionHistory(Transaction transaction) {
         Transaction[] temp = customerTransactionHistory;
         customerTransactionHistory = new Transaction[temp.length+1];

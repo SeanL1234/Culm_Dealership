@@ -25,6 +25,7 @@ public class TradeInAccount extends Account {
      * @param rating the customer's rating in the system
      * @param vehicleForTrading the Vehicle object being traded in
      * @param percentMatch the percentage match required for a vehicle to be considered applicable
+     * @param rangeOfAccept price buffer used in trade acceptance logic
      */
     public TradeInAccount(boolean isOrgaization, boolean isFamily, Spec expectation, int rating, Vehicle vehicleForTrading, double percentMatch, double rangeOfAccept) {
         super(isOrgaization, isFamily);
@@ -36,9 +37,12 @@ public class TradeInAccount extends Account {
     }
 
     /**
-     * Validates if the customer can complete a trade-in transaction.
-     * @param vehicle array of Vehicle objects available for trade
-     * @return boolean indicating if the trade is valid (must have good rating and trade-in value supports lowest applicable vehicle)
+     * Validates whether this trade-in account can complete a trade.
+     * Requires a non-bad rating and trade-in vehicle base price greater than or equal to
+     * the lowest applicable inventory vehicle price.
+     *
+     * @param vehicle all available inventory vehicles
+     * @return true if the trade-in account is valid for trading
      */
     public boolean validate(Vehicle[] vehicle) {
         return !isRatedBad() && vehicleForTrading.getBasePrice() >= findLowestInApplicable(vehicle);
@@ -77,8 +81,9 @@ public class TradeInAccount extends Account {
     }
 
     /**
-     * Returns the acceptable range of price deviation.
-     * @return double representing the range of acceptance
+     * Returns the price buffer used when deciding whether to accept a trade.
+     *
+     * @return range-of-accept value in dollars
      */
     public double getRangeOfAccept() {
         return rangeOfAccept;
@@ -117,8 +122,8 @@ public class TradeInAccount extends Account {
     }
 
     /**
-     * Updates the acceptable price range deviation.
-     * @param rangeOfAccept the new range of acceptance value
+     * Updates the price buffer used when deciding whether to accept a trade.
+     * @param rangeOfAccept the new range-of-accept value
      */
     public void setRangeOfAccept(double rangeOfAccept) {
         this.rangeOfAccept = rangeOfAccept;
@@ -184,6 +189,14 @@ public class TradeInAccount extends Account {
         return rating < BAD_THRESHOLD;
     }
 
+    /**
+     * Determines whether the customer accepts trading their vehicle for the given one.
+     * Auto-accepts if trade-in value is well below the target price minus rangeOfAccept;
+     * otherwise uses a 50% random chance when within range.
+     *
+     * @param tradeFor the dealership vehicle the customer wants
+     * @return true if the trade is accepted
+     */
     public boolean tradeVehicle(Vehicle tradeFor) {
         if(vehicleForTrading.getBasePrice() < tradeFor.getBasePrice() - rangeOfAccept) {
             return true;

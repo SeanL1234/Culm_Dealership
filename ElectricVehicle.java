@@ -140,6 +140,13 @@ public class ElectricVehicle extends Vehicle{
          "\nCharger Type: "+chargerType + "\n";
    }
 
+   /**
+    * Compares this electric vehicle to another, including superclass fields,
+    * autopilot/modes flags, charger type, and electric spec (100% match).
+    *
+    * @param obj object to compare
+    * @return true if all fields are equal
+    */
    @Override
    public boolean equals(Object obj) {
       if (obj == null) return false;

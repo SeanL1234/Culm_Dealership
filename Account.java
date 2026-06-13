@@ -6,8 +6,7 @@
  * 
  * Description: Abstract base class that represents a dealership account.
  * This class serves as the parent class for all account types (BuyerAccount, SellerAccount, TradeInAccount).
- * It stores common account information such as whether the account is for an organization or family,
- * and provides a discount constant for organizational accounts.
+ * It stores common account information such as whether the account is for an organization or family.
  */
 abstract class Account {
     private boolean isOrganization;
@@ -39,10 +38,18 @@ abstract class Account {
      */
     abstract boolean validate(Vehicle[] vehicles);
 
+    /**
+     * Returns whether this account belongs to an organization.
+     * @return true if the account is for an organization
+     */
     public boolean isOrganization() {
         return isOrganization;
     }
 
+    /**
+     * Returns whether this account belongs to a family.
+     * @return true if the account is for a family
+     */
     public boolean isFamily() {
         return isFamily;
     }

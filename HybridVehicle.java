@@ -161,6 +161,13 @@ public class HybridVehicle extends Vehicle{
          "\nCharger Type: "+chargerType + "\n";
    }
 
+   /**
+    * Compares this hybrid vehicle to another, including superclass fields,
+    * rechargeable/modes/plug-in flags, charger type, and hybrid spec (100% match).
+    *
+    * @param obj object to compare
+    * @return true if all fields are equal
+    */
    @Override
    public boolean equals(Object obj) {
       if (obj == null) return false;

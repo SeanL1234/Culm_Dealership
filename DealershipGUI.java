@@ -129,8 +129,10 @@ public class DealershipGUI extends JFrame {
        ================================================== */
 
     /**
-     * Opens the inventory management menu and processes
-     * the selected inventory-related operation.
+     * Opens the inventory management menu and runs the selected action.
+     * Options: display inventory, search by VIN, search by spec (Gas/Electric/Hybrid),
+     * sort by year or manufacturer, remove vehicle, view depreciated value,
+     * list cheap vehicles, or add a new vehicle interactively.
      */
     private void openInventoryMenu() {
 
@@ -1019,12 +1021,9 @@ private void openTransactionMenu() {
    ================================================== */
 
 /**
- * Opens the reports menu and processes
- * the selected report-generation operation.
- *
- * Available operations:
- * - View monthly profit report
- * - View yearly profit report
+ * Opens the reports menu and computes profit for the selected period.
+ * Options: monthly salary (profit for a given month/year) and
+ * yearly salary (profit for a given year). Results are shown in the output area.
  */
 private void openReportMenu() {
 

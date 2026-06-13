@@ -23,6 +23,7 @@ public class SellerAccount extends Account {
      * @param offeredPrice the price the seller is asking for the vehicle
      * @param rating the seller's rating in the system
      * @param ownedVehicle the Vehicle object the seller is offering to sell
+     * @param rangeOfAccept price buffer below offered price still negotiable (50% chance)
      */
     public SellerAccount(boolean isOrgaization, boolean isFamily, int offeredPrice, int rating, Vehicle ownedVehicle, double rangeOfAccept) {
         super(isOrgaization, isFamily);
@@ -57,8 +58,10 @@ public class SellerAccount extends Account {
     }
 
     /**
-     * Returns the acceptable range of price deviation from the offered price.
-     * @return double representing the range of acceptance
+     * Returns the price buffer subtracted from the offered price when negotiating.
+     * Deals at or above {@code offeredPrice - rangeOfAccept} may still be accepted randomly.
+     *
+     * @return range-of-accept value in dollars
      */
     public double getRangeOfAccept() {
         return rangeOfAccept;
@@ -89,8 +92,8 @@ public class SellerAccount extends Account {
     }
 
     /**
-     * Updates the acceptable price range deviation.
-     * @param rangeOfAccept the new range of acceptance value
+     * Updates the price buffer used when negotiating seller deals.
+     * @param rangeOfAccept the new range-of-accept value
      */
     public void setRangeOfAccept(double rangeOfAccept) {
         this.rangeOfAccept = rangeOfAccept;

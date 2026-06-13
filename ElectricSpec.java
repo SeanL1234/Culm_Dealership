@@ -23,34 +23,48 @@ public class ElectricSpec extends Spec {
     private double batteryHealthPercentage;
     private int chargingTime;
 
+    /**
+     * Returns the battery health as a fraction (0.0–1.0).
+     * @return battery health percentage
+     */
     public double getBatteryHealthPercentage() {
         return batteryHealthPercentage;
     }
 
+    /**
+     * Sets the battery health percentage.
+     * @param batteryHealthPercentage battery health as a fraction (0.0–1.0)
+     */
     public void setBatteryHealthPercentage(double batteryHealthPercentage) {
         this.batteryHealthPercentage = batteryHealthPercentage;
     }
 
+    /**
+     * Returns the charging time used in depreciation and matching.
+     * @return charging time
+     */
     public int getChargingTime() {
         return chargingTime;
     }
 
+    /**
+     * Sets the charging time.
+     * @param chargingTime charging time value
+     */
     public void setChargingTime(int chargingTime) {
         this.chargingTime = chargingTime;
     }
 
     /**
-     * Constructor for ElectricSpec.
-     * Initializes an ElectricSpec object with vehicle specifications and electric vehicle properties.
-     * 
-     * @param mileage the total mileage of the vehicle
-     * @param age the age of the vehicle in years
-     * @param warrantyExpireYear the year the warranty expires
-     * @param lastMaintenance the date of last maintenance
-     * @param baseMaintenanceFee the base maintenance cost
-     * @param engineType the type of engine
-     * @param fuelCapacity the capacity of the fuel tank
-     * @param fuelEfficiency the fuel efficiency rating
+     * Constructs an ElectricSpec with base spec fields and electric-specific properties.
+     *
+     * @param mileage total vehicle mileage
+     * @param age vehicle age in years
+     * @param warrantyExpireYear year the warranty expires
+     * @param lastMaintenance date or description of last maintenance
+     * @param baseMaintenanceFee base maintenance cost
+     * @param batteryHealthPercentage battery health as a fraction (0.0–1.0)
+     * @param chargingTime charging time value used in depreciation and matching
      */
     public ElectricSpec(int mileage, int age, int warrantyExpireYear, String lastMaintenance, int baseMaintenanceFee, 
         double batteryHealthPercentage, int chargingTime) {
@@ -60,9 +74,9 @@ public class ElectricSpec extends Spec {
     }
 
     /**
-     * Calculates the yearly depreciation rate based on fuel efficiency, age, and mileage.
-     * Returns a cumulative depreciation percentage based on multiple factors.
-     * @return the calculated yearly depreciation rate
+     * Calculates the cumulative yearly depreciation rate for an electric vehicle.
+     * Adds rates when charging time, age, or mileage exceed their depreciation thresholds.
+     * @return total yearly depreciation rate percentage
      */
     @Override
     public int calculateYearlyDepreciationRate() {
@@ -84,10 +98,10 @@ public class ElectricSpec extends Spec {
     }
 
     /**
-     * Calculates the expected selling price of the vehicle based on depreciation factors.
-     * Deducts depreciation amounts from the base price based on age, mileage, and fuel efficiency.
+     * Calculates expected selling price by subtracting fixed depreciation amounts
+     * from the base price when charging time, age, or mileage exceed thresholds.
      * @param basePrice the original base price of the vehicle
-     * @return the calculated expected price after depreciation
+     * @return expected price after depreciation deductions
      */
     @Override
     public int calculateExpectedPrice(int basePrice) {
@@ -108,11 +122,13 @@ public class ElectricSpec extends Spec {
     }
 
     /**
-     * Compares this ElectricSpec with another Spec object to determine matching compatibility.
-     * Checks matching criteria including engine type, fuel capacity, efficiency, age, and mileage.
-     * @param spec the Spec object to compare with
-     * @param percentMatch the required percentage match threshold (0-100)
-     * @return true if the match percentage meets or exceeds the threshold; false otherwise
+     * Determines whether this electric spec matches another at or above the
+     * given percent threshold. Compares age (this &lt;= other), mileage
+     * (this &lt;= other), and charging time (this &lt;= other).
+     *
+     * @param spec the spec to compare (must be an {@link ElectricSpec})
+     * @param percentMatch required match percentage (0–100); 0 always matches
+     * @return true if the match percentage meets or exceeds the threshold
      */
     @Override
     public boolean equals(Object spec, double percentMatch) {
@@ -147,9 +163,9 @@ public class ElectricSpec extends Spec {
     }
 
     /**
-     * Returns a string representation of the ElectricSpec object.
-     * Includes engine type, fuel capacity, fuel efficiency, and inherited spec properties.
-     * @return a formatted string containing all relevant spec details
+     * Returns a string with base spec fields plus battery health percentage
+     * and charging time.
+     * @return formatted electric specification details
      */
     public String toString() {
         String temp = "";

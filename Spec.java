@@ -132,19 +132,36 @@ public abstract class Spec {
         this.baseMaintenanceFee = baseMaintenanceFee;
     }
 
+    /**
+     * Calculates the yearly depreciation rate for this vehicle specification.
+     * @return yearly depreciation rate as a percentage
+     */
     public abstract int calculateYearlyDepreciationRate();
 
+    /**
+     * Calculates the expected price after applying this spec's depreciation rules.
+     * @param basePrice original base price
+     * @return expected price after depreciation
+     */
     public abstract int calculateExpectedPrice(int basePrice);
 
+    /**
+     * Compares this spec to another using a percentage-match threshold.
+     * @param spec the spec to compare against
+     * @param percentMatch required match percentage (0–100)
+     * @return true if the match percentage meets the threshold
+     */
     public abstract boolean equals(Object spec, double percentMatch);
 
     /**
-     * Calculates the expected value of the vehicle after the given number of years.
-     * Uses the current yearly depreciation rate and expected price based on the base price.
+     * Estimates vehicle value after a number of years.
+     * Computes an initial price via {@link #calculateExpectedPrice(int)} and
+     * the yearly rate via {@link #calculateYearlyDepreciationRate()}, then
+     * recursively adjusts value until the year counter reaches zero.
      *
-     * @param basePrice the base price of the vehicle
-     * @param year the number of years to project into the future
-     * @return the projected value after the specified number of years
+     * @param basePrice the vehicle's base price
+     * @param year number of years to project
+     * @return estimated value after processing
      */
     public int calculateValueAfterYear(int basePrice, int year){
         int depreciationRate = calculateYearlyDepreciationRate();

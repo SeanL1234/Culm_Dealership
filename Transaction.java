@@ -3,10 +3,10 @@
 * Name: Tommy Xiao
 * Class: ICS4U1-21
 * Date: May 28, 2026
-* Description: The Transaction class represents a vehicle transaction between
-* a customer and the dealership. It stores customer information,
-* transaction details, date information, and the vehicle involved.
-*/
+ * Description: The Transaction class represents a vehicle transaction between
+ * a customer and the dealership. It stores customer information,
+ * transaction details, date information, and the vehicles obtained and sold.
+ */
 public class Transaction {
 
    // Constants
@@ -46,8 +46,9 @@ public class Transaction {
    /** Transaction year. */
    private int year;
 
-   /** Vehicle involved in the transaction. */
+   /** Vehicle obtained by the dealership in this transaction. */
    private Vehicle obtainedVehicle;
+   /** Vehicle sold by the dealership in this transaction. */
    private Vehicle soldVehicle;
    
    // Accessors
@@ -102,19 +103,18 @@ public class Transaction {
       return year;
    }
 
-   /** @return vehicle involved in the transaction */
+   /** @return the vehicle sold by the dealership in this transaction, or null */
    public Vehicle getVehicleSold(){
       return soldVehicle;
    }
 
+   /**
+    * Returns the vehicle obtained by the dealership in this transaction.
+    * @return obtained vehicle, or null
+    */
    public Vehicle getVehicleObtained(){
       return obtainedVehicle;
    }
-   /**
-    * Returns the vehicle involved in this transaction.
-    * @return Vehicle object
-    */
-   
 
    // Mutators
 
@@ -180,25 +180,22 @@ public class Transaction {
    // public void setVehicle (Vehicle vehicle){
    //    this.vehicle = vehicle;
    // }
+
    /**
-    * Sets the vehicle involved in this transaction.
-    * @param vehicle Vehicle object
-    */
-   
-   /**
-    * Constructs a Transaction object with customer, vehicle,
-    * transaction details, and date information.
+    * Constructs a Transaction with customer info, flags, date, and vehicles involved.
     *
-    * @param customer customer involved in the transaction
-    * @param finalPrice final transaction price
-    * @param isTradeIn whether a trade-in occurred
-    * @param isBought whether the vehicle was bought
-    * @param isSold whether the vehicle was sold
-    * @param isLease whether the vehicle was leased
+    * @param customerName name of the customer
+    * @param customerID customer identifier
+    * @param finalPrice agreed transaction price ({@code -1} for some trade-ins)
+    * @param isTradeIn whether this is a trade-in transaction
+    * @param isBought whether the dealership bought a vehicle
+    * @param isSold whether the dealership sold a vehicle
+    * @param isLease whether this is a lease transaction
     * @param month transaction month
-    * @param date transaction day
+    * @param date transaction day of month
     * @param year transaction year
-    * @param vehicle vehicle involved in the transaction
+    * @param obtainedVehicle vehicle obtained by the dealership (may be null)
+    * @param soldVehicle vehicle sold by the dealership (may be null)
     */
    public Transaction(String customerName, String customerID, int finalPrice,boolean isTradeIn, boolean isBought,boolean isSold,boolean isLease, int month,int date,int year,Vehicle obtainedVehicle, Vehicle soldVehicle){
       this.customerName = customerName;
@@ -230,9 +227,10 @@ public class Transaction {
    }
    
    /**
-    * Determines whether the transaction was profitable.
+    * Determines whether the dealership made a positive profit on this transaction.
+    * Delegates to {@link #determineProfitMade()}.
     *
-    * @return true if final price exceeds base price
+    * @return true if profit is greater than zero
     */
    public boolean wasProfitable(){
       return determineProfitMade() > 0;

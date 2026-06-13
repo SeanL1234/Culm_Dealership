@@ -504,17 +504,15 @@ abstract class Vehicle {
    
    /**
     * Determines whether the vehicle is considered cheap.
+    * Cheap means the spec's expected price is less than the base price
+    * plus {@link #CHEAP_RANGE} (20%) of the base price.
     *
-    * @return true if expected price is within the cheap range
+    * @return true if the vehicle qualifies as cheap
     */
    public boolean isCheap(){
       return vehicleSpec.calculateExpectedPrice(basePrice) < basePrice + (basePrice*CHEAP_RANGE);
    }
-   /**
-    * Determine whether the vehicle is considered cheap based on expected price.
-    * @return true if cheap
-    */
-   
+
    /**
     * Determines whether the vehicle is family-friendly.
     *
@@ -523,11 +521,7 @@ abstract class Vehicle {
    public boolean isFamilyFriendly(){
       return numSeats >=FF_NUMSEATS && safetyRating>=FF_SAFETYRATING && typeWheelControl.equals(FF_WHEELCONTROL);
    }
-   /**
-    * Returns whether the vehicle is family-friendly based on seats, safety and wheel control.
-    * @return true if family-friendly
-    */
-   
+
    /**
     * Displays the most important vehicle information.
     *
@@ -540,11 +534,7 @@ abstract class Vehicle {
          "\nYear: "+ year +
          "\nColor: "+color;
    }
-   /**
-    * Display essential info (VIN, model, brand, year, color).
-    * @return short description string
-    */
-   
+
    /**
     * Calculates the maintenance fee for the vehicle.
     *
