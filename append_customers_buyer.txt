@@ -1,0 +1,23 @@
+1
+Alice Wong
+CU3
+8
+seller
+null
+buyer
+N
+Y
+22000
+Electric
+5000
+1
+2027
+2025-11-01
+100
+0.95
+45
+0.85
+1200.0
+TradeIn
+null
+0

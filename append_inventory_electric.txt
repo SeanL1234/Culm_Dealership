@@ -1,0 +1,55 @@
+2
+Tesla
+Model 3
+2023
+52000
+Long Range
+225
+Sedan
+AWD
+Automatic
+9
+5
+Pearl
+1000
+12 months
+350
+VINAPP003
+Electric
+Y
+Y
+Supercharger
+15000
+1
+2028
+2025-07-01
+130
+0.94
+45
+Rivian
+R1T
+2024
+75000
+Adventure
+180
+Truck
+AWD
+Automatic
+10
+5
+Green
+11000
+12 months
+400
+VINAPP004
+Electric
+Y
+Y
+CCS
+8000
+0
+2029
+2025-09-01
+150
+0.98
+60
