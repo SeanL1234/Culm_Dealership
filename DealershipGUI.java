@@ -403,6 +403,7 @@ public class DealershipGUI extends JFrame {
                         break;
                 
                 case "Add Vehicle":
+                try {
                         String brandName = JOptionPane.showInputDialog("Brand name: ");
                         String modelName = JOptionPane.showInputDialog("Model name: ");
                         int year = Integer.parseInt(JOptionPane.showInputDialog("Year: "));
@@ -462,6 +463,9 @@ public class DealershipGUI extends JFrame {
                         }
                         dealership.addVehicle(car);
                         JOptionPane.showMessageDialog(this, "Vehicle added to inventory.");
+                } catch(NumberFormatException nfe) {
+                        txtOutput.setText("Number format error!");
+                }
                         break;
                 }
     }
@@ -790,7 +794,7 @@ private void openCustomerMenu() {
             
             // Update a customer's loyalty points
             case "Update Loyalty":
-
+                try {
                 String n =
                         JOptionPane.showInputDialog("Name");
 
@@ -809,6 +813,9 @@ private void openCustomerMenu() {
 
                 txtOutput.setText(
                         "Loyalty updated.");
+                } catch(NumberFormatException nfe) {
+                        txtOutput.setText("Error, number formatting");
+                }
 
                 break;
 
@@ -923,7 +930,7 @@ private void openTransactionMenu() {
 
             // Search transactions that occurred
             // on a specific day
-
+            try {
             int month =
                     Integer.parseInt(
                             JOptionPane.showInputDialog("Month"));
@@ -942,13 +949,17 @@ private void openTransactionMenu() {
                             day,
                             year));
 
+            } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+            }
+
             break;
 
         case "Search By Month":
 
             // Search all transactions
             // within a specific month
-
+            try {
             int m =
                     Integer.parseInt(
                             JOptionPane.showInputDialog("Month"));
@@ -961,14 +972,16 @@ private void openTransactionMenu() {
                     dealership.searchTransactionsByMonth(
                             m,
                             y));
-
+            } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+            }
             break;
 
         case "Search By Year":
 
             // Search all transactions
             // within a specific year
-
+            try {
             int yr =
                     Integer.parseInt(
                             JOptionPane.showInputDialog("Year"));
@@ -976,6 +989,10 @@ private void openTransactionMenu() {
             displayTransactions(
                     dealership.searchTransactionsByYear(
                             yr));
+
+            } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+            }
 
             break;
 
@@ -1034,7 +1051,7 @@ private void openReportMenu() {
     switch(choice) {
 
         case "Monthly Salary":
-
+        try {
             // Generate profit report for a specific month
             int month =
                     Integer.parseInt(
@@ -1054,10 +1071,14 @@ private void openReportMenu() {
             txtOutput.setText(
                     "Monthly Profit: $" + monthly);
 
+        } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+        }
+
             break;
 
         case "Yearly Salary":
-
+        try {
             // Generate profit report for a specific year
             int yr =
                     Integer.parseInt(
@@ -1069,6 +1090,9 @@ private void openReportMenu() {
 
             txtOutput.setText(
                     "Yearly Profit: $" + yearly);
+        } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+        }
 
             break;
     }
@@ -1482,7 +1506,7 @@ private void openDealsMenu() {
             break;
 
         case "Buy Vehicle":
-
+            try {
             // Process vehicle purchase
             // from dealership inventory
 
@@ -1612,11 +1636,13 @@ private void openDealsMenu() {
                             }
                     }
             }
-
+                }catch (NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+            }
             break;
 
         case "Trade Vehicle":
-
+            try {
             // Process vehicle trade-in transaction
 
             String tradeID =
@@ -1733,6 +1759,9 @@ private void openDealsMenu() {
                             }
                     }
             }
+        } catch(NumberFormatException nfe) {
+                txtOutput.setText("error! number formatting");
+        }
     }
 }
 
