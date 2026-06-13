@@ -143,7 +143,8 @@ public class DealershipGUI extends JFrame {
                 "Sort By Manufacturer",
                 "Remove Vehicle",
                 "See Depreciated Value",
-                "See Cheap Vehicles"
+                "See Cheap Vehicles",
+                "Add Vehicle"
         };
 
         // Display action selection dialog
@@ -399,7 +400,70 @@ public class DealershipGUI extends JFrame {
 
                 case "See Cheap Vehicles":
                         txtOutput.setText(dealership.displayCheapVehicles());
-        }
+                        break;
+                
+                case "Add Vehicle":
+                        String brandName = JOptionPane.showInputDialog("Brand name: ");
+                        String modelName = JOptionPane.showInputDialog("Model name: ");
+                        int year = Integer.parseInt(JOptionPane.showInputDialog("Year: "));
+                        int basePrice = Integer.parseInt(JOptionPane.showInputDialog("Base price: "));
+                        String trim = JOptionPane.showInputDialog("Trim: ");
+                        int maxSpeed = Integer.parseInt(JOptionPane.showInputDialog("Max speed: "));
+                        String type = JOptionPane.showInputDialog("Type: ");
+                        String wheel = JOptionPane.showInputDialog("Amount of wheels: ");
+                        String trans = JOptionPane.showInputDialog("Transmission: ");
+                        int safe = Integer.parseInt(JOptionPane.showInputDialog("Safety rating: "));
+                        int seats = Integer.parseInt(JOptionPane.showInputDialog("Number of seats: "));
+                        String color = JOptionPane.showInputDialog("Color: ");
+                        int tow = Integer.parseInt(JOptionPane.showInputDialog("Towing capacity: "));
+                        String maintenance = JOptionPane.showInputDialog("Maintenance information: ");
+                        int range = Integer.parseInt(JOptionPane.showInputDialog("Range: "));
+                        String VIN = JOptionPane.showInputDialog("VIN: ");
+                        String typeCar = JOptionPane.showInputDialog("Vehicle type (Gas/Electric): ");
+                        Vehicle car = null;
+
+                        if (typeCar.equals("Gas")) {
+                                int maxHorsePower = Integer.parseInt(JOptionPane.showInputDialog("Max horsepower: "));
+                                int mileage = Integer.parseInt(JOptionPane.showInputDialog("Mileage: "));
+                                int age = Integer.parseInt(JOptionPane.showInputDialog("Age: "));
+                                int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog("Warranty expiration year: "));
+                                String lastMaintenance = JOptionPane.showInputDialog("Last maintenance date: ");
+                                int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog("Base maintenance fee: "));
+                                String engineType = JOptionPane.showInputDialog("Engine type: ");
+                                int cap = Integer.parseInt(JOptionPane.showInputDialog("Capacity: "));
+                                int eff = Integer.parseInt(JOptionPane.showInputDialog("Efficiency: "));
+                                car = new GasVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, maxHorsePower, new GasSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, engineType, cap, eff));
+                        } else if(typeCar.equals("Electric")) {
+                                boolean hasAutoPilot = JOptionPane.showInputDialog("Has autopilot? (Y/N): ").equals("Y");
+                                boolean hasModes = JOptionPane.showInputDialog("Has modes? (Y/N): ").equals("Y");
+                                String chargerType = JOptionPane.showInputDialog("Charger type: ");
+                                int mileage = Integer.parseInt(JOptionPane.showInputDialog("Mileage: "));
+                                int age = Integer.parseInt(JOptionPane.showInputDialog("Age: "));
+                                int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog("Warranty expiration year: "));
+                                String lastMaintenance = JOptionPane.showInputDialog("Last maintenance date: ");
+                                int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog("Base maintenance fee: "));
+                                double batteryHealthPercentage = Double.parseDouble(JOptionPane.showInputDialog("Battery health percentage: "));
+                                int chargingTime = Integer.parseInt(JOptionPane.showInputDialog("Charging time: "));
+                                car = new ElectricVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new ElectricSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, batteryHealthPercentage, chargingTime), hasAutoPilot, hasModes, chargerType);
+                        } else {
+                                boolean isRechargeable = JOptionPane.showInputDialog("Is rechargeable? (Y/N): ").equals("Y");
+                                boolean hasModes = JOptionPane.showInputDialog("Has modes? (Y/N): ").equals("Y");
+                                boolean hasPlugIn = JOptionPane.showInputDialog("Has plug-in? (Y/N): ").equals("Y");
+                                String chargerType = JOptionPane.showInputDialog("Charger type: ");
+                                int mileage = Integer.parseInt(JOptionPane.showInputDialog("Mileage: "));
+                                int age = Integer.parseInt(JOptionPane.showInputDialog("Age: "));
+                                int warrantyExpireYear = Integer.parseInt(JOptionPane.showInputDialog("Warranty expiration year: "));
+                                String lastMaintenance = JOptionPane.showInputDialog("Last maintenance date: ");
+                                int baseMaintenanceFee = Integer.parseInt(JOptionPane.showInputDialog("Base maintenance fee: "));
+                                int powerReturnRate = Integer.parseInt(JOptionPane.showInputDialog("Power return rate: "));
+                                int chargingTime = Integer.parseInt(JOptionPane.showInputDialog("Charging time: "));
+                                int fuelEfficiency = Integer.parseInt(JOptionPane.showInputDialog("Fuel efficiency: "));
+                                car = new HybridVehicle(modelName, brandName, type, year, basePrice, safe, VIN, tow, wheel, trans, trim, maxSpeed, seats, color, maintenance, range, new HybridSpec(mileage, age, warrantyExpireYear, lastMaintenance, baseMaintenanceFee, powerReturnRate, chargingTime, fuelEfficiency), isRechargeable, hasModes, hasPlugIn, chargerType);
+                        }
+                        dealership.addVehicle(car);
+                        JOptionPane.showMessageDialog(this, "Vehicle added to inventory.");
+                        break;
+                }
     }
 
 /* ==================================================

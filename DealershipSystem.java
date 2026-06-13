@@ -961,7 +961,8 @@ public class DealershipSystem {
                 }
             }
             int j = i - 1;
-            while (j >= 0) {
+            boolean breakFlag = false;
+            while (j >= 0 && !breakFlag) {
                 String[] partsJ = customers[j].getName().split(" ");
                 String lastJ = partsJ[partsJ.length - 1];
                 boolean shouldShift = false;
@@ -986,7 +987,7 @@ public class DealershipSystem {
                     customers[j + 1] = customers[j];
                     j--;
                 } else {
-                    break;
+                    breakFlag = true;
                 }
             }
             customers[j + 1] = key;
@@ -1013,7 +1014,8 @@ public class DealershipSystem {
                 }
             }
             int j = i - 1;
-            while (j >= 0) {
+            boolean breakFlag = false;
+            while (j >= 0 && !breakFlag) {
                 Customer cur = customers[j];
                 String[] partsJ = cur.getName().split(" ");
                 String lastJ = partsJ[partsJ.length - 1];
@@ -1044,7 +1046,7 @@ public class DealershipSystem {
                     customers[j + 1] = customers[j];
                     j--;
                 } else {
-                    break;
+                    breakFlag = true;
                 }
             }
             customers[j + 1] = key;
@@ -1860,6 +1862,28 @@ public class DealershipSystem {
         return addCustomer(c);
     }
 
+    public boolean addVehicle(Vehicle vehicle) {
+        if (vehicle == null) return false;
+        if (vehicles == null) {
+            vehicles = new Vehicle[1];
+            vehicles[0] = vehicle;
+            numCars = 1;
+            return true;
+        }
+        if (numCars < vehicles.length) {
+            vehicles[numCars] = vehicle;
+            numCars++;
+            return true;
+        } else {
+            Vehicle[] temp = vehicles;
+            vehicles = new Vehicle[temp.length + 1];
+            for (int i = 0; i < temp.length; i++) vehicles[i] = temp[i];
+            vehicles[temp.length] = vehicle;
+            numCars++;
+            return true;
+        }
+    }
+
     /**
      * Remove a vehicle from inventory by VIN. Shifts remaining vehicles down and decrements numCars.
      * @param VIN vehicle VIN to remove
@@ -1869,9 +1893,8 @@ public class DealershipSystem {
         if (vehicles == null || VIN == null) return false;
         int idx = -1;
         for (int i = 0; i < numCars; i++) {
-            if (vehicles[i] != null && VIN.equals(vehicles[i].getVin())) {
+            if (vehicles[i] != null && VIN.equals(vehicles[i].getVin()) && idx == -1) {
                 idx = i;
-                break;
             }
         }
         if (idx == -1) return false;
@@ -1978,9 +2001,8 @@ public class DealershipSystem {
         Customer target = null;
         for (int i = 0; i < numCustomer; i++) {
             Customer c = customers[i];
-            if (c != null && c.getName().equals(name) && c.getId().equals(id)) {
+            if (c != null && c.getName().equals(name) && c.getId().equals(id) && c != customers[i]) {
                 target = c;
-                break;
             }
         }
         if (target == null) return false;
