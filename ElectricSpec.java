@@ -68,13 +68,15 @@ public class ElectricSpec extends Spec {
     public int calculateYearlyDepreciationRate() {
         int temp = 0;
         
-        // [TODO] electric spec that should be added here
+        if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
+            temp += DEPRECIATE_CHARGING_TIME_BY_RATE;
+        }
 
-        if (getAge() >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_RATE;
         }
 
-        if (getMileage() >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_RATE;
         }
 
@@ -91,13 +93,14 @@ public class ElectricSpec extends Spec {
     public int calculateExpectedPrice(int basePrice) {
         int temp = 0;
                 
-        // [TODO] electric spec that should be added here
+        if (chargingTime >= DEPRECIATE_CHARGING_TIME) {
+            temp += DEPRECIATE_CHARGING_TIME_BY_VALUE;
+        }
 
-
-        if (getAge() >= DEPRECIATE_AGE) {
+        if (super.getAge() >= DEPRECIATE_AGE) {
             temp += DEPRECIATE_AGE_BY_PRICE;
         }
-        if (getMileage() >= DEPRECIATE_MILEAGE) {
+        if (super.getMileage() >= DEPRECIATE_MILEAGE) {
             temp += DEPRECIATE_MILEAGE_BY_PRICE;
         }
 
@@ -120,18 +123,20 @@ public class ElectricSpec extends Spec {
         } else if (spec == this) {
             return true;
         } else {
-            GasSpec gasSpec = (GasSpec) spec;
+            ElectricSpec electricSpec = (ElectricSpec) spec;
             int matchCount = 0;
             int totalCount = 0;
 
-            // [TODO] electric spec that should be added here
-
-            if (this.getAge() <= gasSpec.getAge()) {
+            if (super.getAge() <= electricSpec.getAge()) {
                 matchCount++;
             }
             totalCount++;
 
-            if (this.getMileage() <= gasSpec.getMileage()) {
+            if (super.getMileage() <= electricSpec.getMileage()) {
+                matchCount++;
+            }
+
+            if (this.chargingTime <= electricSpec.getChargingTime()) {
                 matchCount++;
             }
             totalCount++;

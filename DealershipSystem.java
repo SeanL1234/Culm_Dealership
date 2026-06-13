@@ -647,26 +647,6 @@ public class DealershipSystem {
         }
     }
 
-    // public Transaction acceptDeal(Customer customer, Account acc) {
-    //     if(acc == null) {
-    //         return null;
-    //     } else if(!acc.validate(vehicles)) {
-    //         return null;
-    //     } else {
-    //         int suggestedPrice = customer.getRandomizedDealPrice();
-    //         if(acc instanceof SellerAccount) {
-    //             if(((SellerAccount)acc).sellVehicle(suggestedPrice)) {
-    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, false, true, false, 0, 0, 0, ((SellerAccount)acc).getOwnedVehicle());
-    //             }
-    //         } else if(acc instanceof BuyerAccount) {
-    //             if(((BuyerAccount)acc).buyVehicle(suggestedPrice)) {
-    //                 return new Transaction(customer.getName(), customer.getId(), suggestedPrice, false, true, false, false, 0, 0, 0, ((BuyerAccount)acc).());
-    //             }
-    //         }
-    //         return null;
-    //     }
-    // }
-
     /**
      * Attempt to accept a deal between the given customer and account using internal validation.
      * If the account validates against the current inventory it will attempt the appropriate
@@ -784,7 +764,7 @@ public class DealershipSystem {
      * @return integer count of matching customers
      */
 
-    public int searchLNHelper(String lastName) {
+    private int searchLNHelper(String lastName) {
         int counter = 0;
         for (int i = 0; i < customers.length; i++) {
             String[] parts = customers[i].getName().split(" ");
@@ -816,7 +796,7 @@ public class DealershipSystem {
     }
 
     /**
-     * Helper that counts transactions for a given customer ID.
+     * Counts transactions for a given customer ID.
      * @param ID customer id to count
      * @return number of transactions for the customer
      */
@@ -1960,7 +1940,7 @@ public class DealershipSystem {
         String string = "";
         for (int i = 0; i < numCustomer; i++) {
             Customer c = customers[i];
-            if (c != null && c.isLoyal()) string += c.toString() + "\n";
+            if (c != null && c.isLoyal()) string += c.toString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
         }
         return string;
     }
@@ -1975,18 +1955,6 @@ public class DealershipSystem {
         }
         return string;
     }
-
-    /**
-     * Display all vehicles from a given manufacturer.
-     */
-    // public String displayAllManufacturer(String manufacturer) {
-    //     String string = "";
-    //     for (int i = 0; i < numCars; i++) {
-    //         Vehicle v = vehicles[i];
-    //         if (v != null && manufacturer.equals(v.getModelBrand())) string += v.toString() + "\n";
-    //     }
-    //     return string;
-    // }
 
     /**
      * Display full transaction history.
